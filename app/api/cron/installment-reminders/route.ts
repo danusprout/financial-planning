@@ -82,7 +82,7 @@ export async function GET(request: Request) {
 
     if (!email) continue
 
-    const html = renderInstallmentReminder({ userName: fullName, items, appUrl })
+    const html = await renderInstallmentReminder({ userName: fullName, items, appUrl })
 
     const result = await sendEmail({
       to: email,
