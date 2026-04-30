@@ -44,7 +44,8 @@ type InstallmentRow = {
 type State = { error?: string; success?: boolean } | undefined
 
 function InstallmentForm({ banks, onSuccess }: { banks: Bank[]; onSuccess: () => void }) {
-  const [state, formAction, isPending] = useActionState<State, FormData>(createInstallment, undefined)
+  const wrappedAction = (_: State, formData: FormData) => createInstallment(formData)
+  const [state, formAction, isPending] = useActionState<State, FormData>(wrappedAction, undefined)
   if (state?.success) onSuccess()
 
   const today = new Date().toISOString().slice(0, 10)
@@ -113,8 +114,8 @@ export function InstallmentsListClient({ rows, banks }: { rows: InstallmentRow[]
       {/* Add */}
       <div className="flex justify-end">
         <Dialog open={addOpen} onOpenChange={setAddOpen}>
-          <DialogTrigger asChild>
-            <Button size="sm"><PlusIcon className="w-4 h-4 mr-1" />Tambah Pinjaman</Button>
+          <DialogTrigger render={<Button size="sm" />}>
+            <PlusIcon className="w-4 h-4 mr-1" />Tambah Pinjaman
           </DialogTrigger>
           <DialogContent>
             <DialogHeader><DialogTitle>Tambah Pinjaman</DialogTitle></DialogHeader>

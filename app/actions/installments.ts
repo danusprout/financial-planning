@@ -49,7 +49,7 @@ export async function createInstallment(formData: FormData) {
     start_date: formData.get('start_date'),
     bank_id: formData.get('bank_id') || null,
   })
-  if (!parsed.success) return { error: parsed.error.errors[0].message }
+  if (!parsed.success) return { error: parsed.error.issues[0].message }
 
   const { tenor, ...data } = parsed.data
 
@@ -90,7 +90,7 @@ export async function updateInstallment(id: string, formData: FormData) {
     start_date: formData.get('start_date'),
     bank_id: formData.get('bank_id') || null,
   })
-  if (!parsed.success) return { error: parsed.error.errors[0].message }
+  if (!parsed.success) return { error: parsed.error.issues[0].message }
 
   const { error } = await supabase
     .from('installments')
@@ -140,7 +140,7 @@ export async function createInstallmentPayment(installmentId: string, formData: 
     schedule_id: formData.get('schedule_id') || null,
     note: formData.get('note') || undefined,
   })
-  if (!parsed.success) return { error: parsed.error.errors[0].message }
+  if (!parsed.success) return { error: parsed.error.issues[0].message }
 
   const { error } = await supabase.from('installment_payments').insert({
     user_id: user.id,

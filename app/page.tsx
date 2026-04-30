@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { Button } from '@/components/ui/button'
+import { buttonVariants } from '@/components/ui/button'
 
 export default function LandingPage() {
   return (
@@ -8,12 +8,8 @@ export default function LandingPage() {
       <header className="flex items-center justify-between px-6 py-4 border-b">
         <span className="font-bold text-lg">💰 Financial Planning</span>
         <div className="flex gap-2">
-          <Button asChild variant="ghost" size="sm">
-            <Link href="/login">Masuk</Link>
-          </Button>
-          <Button asChild size="sm">
-            <Link href="/register">Daftar</Link>
-          </Button>
+          <Link href="/login" className={buttonVariants({ variant: 'ghost', size: 'sm' })}>Masuk</Link>
+          <Link href="/register" className={buttonVariants({ size: 'sm' })}>Daftar</Link>
         </div>
       </header>
 
@@ -27,12 +23,8 @@ export default function LandingPage() {
           pengeluaran, tabungan, dan cicilan — semuanya dalam satu tempat.
         </p>
         <div className="mt-8 flex gap-3">
-          <Button asChild size="lg">
-            <Link href="/register">Mulai Gratis</Link>
-          </Button>
-          <Button asChild variant="outline" size="lg">
-            <Link href="/login">Sudah punya akun?</Link>
-          </Button>
+          <Link href="/register" className={buttonVariants({ size: 'lg' })}>Mulai Gratis</Link>
+          <Link href="/login" className={buttonVariants({ variant: 'outline', size: 'lg' })}>Sudah punya akun?</Link>
         </div>
 
         {/* Features */}

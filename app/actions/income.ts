@@ -22,7 +22,7 @@ export async function createIncome(formData: FormData) {
     amount: formData.get('amount'),
     note: formData.get('note') || undefined,
   })
-  if (!parsed.success) return { error: parsed.error.errors[0].message }
+  if (!parsed.success) return { error: parsed.error.issues[0].message }
 
   const { month, source, amount, note } = parsed.data
   const monthDate = `${month}-01`
@@ -51,7 +51,7 @@ export async function updateIncome(id: string, formData: FormData) {
     amount: formData.get('amount'),
     note: formData.get('note') || undefined,
   })
-  if (!parsed.success) return { error: parsed.error.errors[0].message }
+  if (!parsed.success) return { error: parsed.error.issues[0].message }
 
   const { month, source, amount, note } = parsed.data
 

@@ -26,7 +26,7 @@ export async function createExpense(formData: FormData) {
     description: formData.get('description'),
     status: formData.get('status') || 'paid',
   })
-  if (!parsed.success) return { error: parsed.error.errors[0].message }
+  if (!parsed.success) return { error: parsed.error.issues[0].message }
 
   const { error } = await supabase.from('expenses').insert({
     user_id: user.id,
@@ -51,7 +51,7 @@ export async function updateExpense(id: string, formData: FormData) {
     description: formData.get('description'),
     status: formData.get('status') || 'paid',
   })
-  if (!parsed.success) return { error: parsed.error.errors[0].message }
+  if (!parsed.success) return { error: parsed.error.issues[0].message }
 
   const { error } = await supabase
     .from('expenses')

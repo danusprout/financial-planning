@@ -51,11 +51,9 @@ export function CategoriesClient({ categories, userId }: CategoriesClientProps) 
     <div className="space-y-6">
       <div className="flex justify-end">
         <Dialog open={addOpen} onOpenChange={setAddOpen}>
-          <DialogTrigger asChild>
-            <Button size="sm">
-              <PlusIcon className="w-4 h-4 mr-1" />
-              Tambah Kategori
-            </Button>
+          <DialogTrigger render={<Button size="sm" />}>
+            <PlusIcon className="w-4 h-4 mr-1" />
+            Tambah Kategori
           </DialogTrigger>
           <DialogContent>
             <DialogHeader>
@@ -105,15 +103,10 @@ export function CategoriesClient({ categories, userId }: CategoriesClientProps) 
                           open={editTarget?.id === cat.id}
                           onOpenChange={(open) => !open && setEditTarget(null)}
                         >
-                          <DialogTrigger asChild>
-                            <Button
-                              size="icon"
-                              variant="ghost"
-                              className="h-8 w-8"
-                              onClick={() => setEditTarget(cat)}
-                            >
-                              <Pencil className="w-4 h-4" />
-                            </Button>
+                          <DialogTrigger
+                            render={<Button size="icon" variant="ghost" className="h-8 w-8" onClick={() => setEditTarget(cat)} />}
+                          >
+                            <Pencil className="w-4 h-4" />
                           </DialogTrigger>
                           <DialogContent>
                             <DialogHeader>

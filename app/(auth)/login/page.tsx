@@ -12,7 +12,8 @@ import { login } from '@/app/actions/auth'
 type State = { error?: string } | undefined
 
 export default function LoginPage() {
-  const [state, formAction, isPending] = useActionState<State, FormData>(login, undefined)
+  const wrappedLogin = (_: State, formData: FormData) => login(formData)
+  const [state, formAction, isPending] = useActionState<State, FormData>(wrappedLogin, undefined)
 
   return (
     <Card>

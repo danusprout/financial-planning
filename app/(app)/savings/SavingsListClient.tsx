@@ -31,7 +31,8 @@ type Goal = {
 type State = { error?: string; success?: boolean } | undefined
 
 function GoalForm({ onSuccess }: { onSuccess: () => void }) {
-  const [state, formAction, isPending] = useActionState<State, FormData>(createGoal, undefined)
+  const wrappedAction = (_: State, formData: FormData) => createGoal(formData)
+  const [state, formAction, isPending] = useActionState<State, FormData>(wrappedAction, undefined)
   if (state?.success) onSuccess()
 
   return (
@@ -76,8 +77,8 @@ export function SavingsListClient({ goals }: { goals: Goal[] }) {
       {/* Add */}
       <div className="flex justify-end">
         <Dialog open={addOpen} onOpenChange={setAddOpen}>
-          <DialogTrigger asChild>
-            <Button size="sm"><PlusIcon className="w-4 h-4 mr-1" />Tambah Tujuan</Button>
+          <DialogTrigger render={<Button size="sm" />}>
+            <PlusIcon className="w-4 h-4 mr-1" />Tambah Tujuan
           </DialogTrigger>
           <DialogContent>
             <DialogHeader><DialogTitle>Buat Tujuan Tabungan</DialogTitle></DialogHeader>

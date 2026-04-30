@@ -78,11 +78,9 @@ export function IncomeClient({ incomes, total, activeMonth }: IncomeClientProps)
       {/* Add button */}
       <div className="flex justify-end">
         <Dialog open={addOpen} onOpenChange={setAddOpen}>
-          <DialogTrigger asChild>
-            <Button size="sm">
-              <PlusIcon className="w-4 h-4 mr-1" />
-              Tambah
-            </Button>
+          <DialogTrigger render={<Button size="sm" />}>
+            <PlusIcon className="w-4 h-4 mr-1" />
+            Tambah
           </DialogTrigger>
           <DialogContent>
             <DialogHeader>
@@ -121,15 +119,10 @@ export function IncomeClient({ incomes, total, activeMonth }: IncomeClientProps)
                     open={editTarget?.id === income.id}
                     onOpenChange={(open) => !open && setEditTarget(null)}
                   >
-                    <DialogTrigger asChild>
-                      <Button
-                        size="icon"
-                        variant="ghost"
-                        className="h-8 w-8"
-                        onClick={() => setEditTarget(income)}
-                      >
-                        <Pencil className="w-4 h-4" />
-                      </Button>
+                    <DialogTrigger
+                      render={<Button size="icon" variant="ghost" className="h-8 w-8" onClick={() => setEditTarget(income)} />}
+                    >
+                      <Pencil className="w-4 h-4" />
                     </DialogTrigger>
                     <DialogContent>
                       <DialogHeader>

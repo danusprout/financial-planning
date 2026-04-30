@@ -5,15 +5,16 @@ import Link from 'next/link'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { Button } from '@/components/ui/button'
+import { Button, buttonVariants } from '@/components/ui/button'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { forgotPassword } from '@/app/actions/auth'
 
 type State = { error?: string; success?: boolean } | undefined
 
 export default function ForgotPasswordPage() {
+  const wrappedForgotPassword = (_: State, formData: FormData) => forgotPassword(formData)
   const [state, formAction, isPending] = useActionState<State, FormData>(
-    forgotPassword,
+    wrappedForgotPassword,
     undefined
   )
 
@@ -28,9 +29,7 @@ export default function ForgotPasswordPage() {
           <p className="text-sm text-muted-foreground">
             Link reset password sudah dikirim. Cek folder spam jika tidak ada di inbox.
           </p>
-          <Button asChild variant="outline" className="w-full">
-            <Link href="/login">Kembali ke halaman masuk</Link>
-          </Button>
+          <Link href="/login" className={buttonVariants({ variant: 'outline', className: 'w-full' })}>Kembali ke halaman masuk</Link>
         </CardContent>
       </Card>
     )

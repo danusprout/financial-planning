@@ -124,8 +124,8 @@ export function DashboardClient({
                 cx="50%"
                 cy="50%"
                 outerRadius={90}
-                label={({ name, percent }) =>
-                  percent > 0.05 ? `${(percent * 100).toFixed(0)}%` : ''
+                label={({ name, percent }: { name?: string; percent?: number }) =>
+                  (percent ?? 0) > 0.05 ? `${((percent ?? 0) * 100).toFixed(0)}%` : ''
                 }
                 labelLine={false}
               >
@@ -136,7 +136,7 @@ export function DashboardClient({
                   />
                 ))}
               </Pie>
-              <Tooltip formatter={(v: number) => formatIDR(v)} />
+              <Tooltip formatter={(v) => formatIDR(v as number)} />
             </PieChart>
           </ResponsiveContainer>
           {/* Legend */}
@@ -161,8 +161,8 @@ export function DashboardClient({
           <ResponsiveContainer width="100%" height={220}>
             <BarChart data={barData} margin={{ left: -10 }}>
               <XAxis dataKey="name" tick={{ fontSize: 11 }} />
-              <YAxis tickFormatter={(v: number) => `${(v / 1000).toFixed(0)}k`} tick={{ fontSize: 11 }} />
-              <Tooltip formatter={(v: number) => formatIDR(v)} />
+              <YAxis tickFormatter={(v) => `${((v as number) / 1000).toFixed(0)}k`} tick={{ fontSize: 11 }} />
+              <Tooltip formatter={(v) => formatIDR(v as number)} />
               <Legend />
               <Bar dataKey="estimasi" fill="#94a3b8" name="Estimasi" radius={[3, 3, 0, 0]} />
               <Bar dataKey="realisasi" fill="#f97316" name="Realisasi" radius={[3, 3, 0, 0]} />

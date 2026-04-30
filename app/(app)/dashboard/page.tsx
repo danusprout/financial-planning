@@ -48,12 +48,21 @@ export default async function DashboardPage({ searchParams }: Props) {
   const todayStr = now.toISOString().slice(0, 10)
   const in7DaysStr = in7Days.toISOString().slice(0, 10)
 
-  const { data: upcomingSchedules } = await supabase
+  type UpcomingSchedule = {
+    id: string
+    due_date: string
+    expected_amount: number
+    installments: { name: string } | null
+  }
+
+  const { data: upcomingSchedulesRaw } = await supabase
     .from('installment_schedules')
-    .select(`*, installments(name)`)
+    .select(`id, due_date, expected_amount, installments(name)`)
     .gte('due_date', todayStr)
     .lte('due_date', in7DaysStr)
     .order('due_date', { ascending: true })
+
+  const upcomingSchedules = (upcomingSchedulesRaw ?? []) as unknown as UpcomingSchedule[]
 
   // Filter unpaid upcoming
   const { data: recentPayments } = await supabase
@@ -61,15 +70,15 @@ export default async function DashboardPage({ searchParams }: Props) {
     .select('schedule_id')
     .in(
       'schedule_id',
-      (upcomingSchedules ?? []).map((s) => s.id)
+      upcomingSchedules.map((s) => s.id)
     )
 
   const paidIds = new Set((recentPayments ?? []).map((p) => p.schedule_id))
-  const unpaidUpcoming = (upcomingSchedules ?? [])
+  const unpaidUpcoming = upcomingSchedules
     .filter((s) => !paidIds.has(s.id))
     .map((s) => ({
       id: s.id,
-      name: (s.installments as { name: string } | null)?.name ?? 'Cicilan',
+      name: s.installments?.name ?? 'Cicilan',
       due_date: s.due_date,
       expected_amount: Number(s.expected_amount),
     }))

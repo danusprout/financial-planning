@@ -34,8 +34,8 @@ const GROUP_LABELS = {
 
 export function CategoryForm({ onSuccess, editId, defaultValues }: CategoryFormProps) {
   const action = editId
-    ? (state: State, formData: FormData) => updateCategory(editId, formData)
-    : createCategory
+    ? (_: State, formData: FormData) => updateCategory(editId, formData)
+    : (_: State, formData: FormData) => createCategory(formData)
 
   const [state, formAction, isPending] = useActionState<State, FormData>(action, undefined)
 

@@ -35,8 +35,8 @@ const TYPE_LABELS = {
 
 export function BankForm({ onSuccess, editId, defaultValues }: BankFormProps) {
   const action = editId
-    ? (state: State, formData: FormData) => updateBank(editId, formData)
-    : createBank
+    ? (_: State, formData: FormData) => updateBank(editId, formData)
+    : (_: State, formData: FormData) => createBank(formData)
 
   const [state, formAction, isPending] = useActionState<State, FormData>(action, undefined)
 

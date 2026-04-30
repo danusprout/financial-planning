@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
+import { buttonVariants } from '@/components/ui/button'
 
 export default function VerifyEmailPage() {
   return (
@@ -18,9 +18,7 @@ export default function VerifyEmailPage() {
           Tidak dapat email? Cek folder <strong>spam</strong> atau coba daftar ulang dengan email
           yang sama.
         </p>
-        <Button asChild variant="outline" className="w-full">
-          <Link href="/login">Kembali ke halaman masuk</Link>
-        </Button>
+        <Link href="/login" className={buttonVariants({ variant: 'outline', className: 'w-full' })}>Kembali ke halaman masuk</Link>
       </CardContent>
     </Card>
   )

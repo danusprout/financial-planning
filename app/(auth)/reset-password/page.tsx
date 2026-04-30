@@ -11,7 +11,8 @@ import { resetPassword } from '@/app/actions/auth'
 type State = { error?: string } | undefined
 
 export default function ResetPasswordPage() {
-  const [state, formAction, isPending] = useActionState<State, FormData>(resetPassword, undefined)
+  const wrappedResetPassword = (_: State, formData: FormData) => resetPassword(formData)
+  const [state, formAction, isPending] = useActionState<State, FormData>(wrappedResetPassword, undefined)
 
   return (
     <Card>

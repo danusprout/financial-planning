@@ -23,8 +23,8 @@ interface IncomeFormProps {
 
 export function IncomeForm({ onSuccess, editId, defaultValues, defaultMonth }: IncomeFormProps) {
   const action = editId
-    ? (state: State, fd: FormData) => updateIncome(editId, fd)
-    : createIncome
+    ? (_: State, fd: FormData) => updateIncome(editId, fd)
+    : (_: State, fd: FormData) => createIncome(fd)
 
   const [state, formAction, isPending] = useActionState<State, FormData>(action, undefined)
 

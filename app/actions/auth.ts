@@ -18,7 +18,7 @@ export async function login(formData: FormData) {
   })
 
   if (!parsed.success) {
-    return { error: parsed.error.errors[0].message }
+    return { error: parsed.error.issues[0].message }
   }
 
   const { error } = await supabase.auth.signInWithPassword(parsed.data)
@@ -43,7 +43,7 @@ export async function register(formData: FormData) {
   })
 
   if (!parsed.success) {
-    return { error: parsed.error.errors[0].message }
+    return { error: parsed.error.issues[0].message }
   }
 
   const { full_name, email, password } = parsed.data
@@ -81,7 +81,7 @@ export async function forgotPassword(formData: FormData) {
   })
 
   if (!parsed.success) {
-    return { error: parsed.error.errors[0].message }
+    return { error: parsed.error.issues[0].message }
   }
 
   const { error } = await supabase.auth.resetPasswordForEmail(parsed.data.email, {
@@ -104,7 +104,7 @@ export async function resetPassword(formData: FormData) {
   })
 
   if (!parsed.success) {
-    return { error: parsed.error.errors[0].message }
+    return { error: parsed.error.issues[0].message }
   }
 
   const { error } = await supabase.auth.updateUser({

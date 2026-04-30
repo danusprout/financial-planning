@@ -65,7 +65,7 @@ export default async function InstallmentDetailPage({ params }: Props) {
       remaining={remaining}
       progressPct={progressPct}
       nextUnpaidSchedule={nextUnpaidSchedule
-        ? { ...nextUnpaidSchedule, expected_amount: Number(nextUnpaidSchedule.expected_amount) }
+        ? { ...nextUnpaidSchedule, expected_amount: Number(nextUnpaidSchedule.expected_amount), isPaid: false }
         : null}
     />
   )

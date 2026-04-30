@@ -24,7 +24,7 @@ export default async function InstallmentsPage() {
       Number(inst.total_amount) > 0
         ? Math.min((totalPaid / Number(inst.total_amount)) * 100, 100)
         : 0
-    const status = remaining <= 0 ? 'LUNAS' : 'BELUM LUNAS'
+    const status = (remaining <= 0 ? 'LUNAS' : 'BELUM LUNAS') as 'LUNAS' | 'BELUM LUNAS'
 
     return {
       id: inst.id,

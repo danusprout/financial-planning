@@ -260,15 +260,10 @@ export function ExpensesClient({
                             open={editTarget?.id === expense.id}
                             onOpenChange={(open) => !open && setEditTarget(null)}
                           >
-                            <DialogTrigger asChild>
-                              <Button
-                                size="icon"
-                                variant="ghost"
-                                className="h-8 w-8"
-                                onClick={() => setEditTarget(expense)}
-                              >
-                                <Pencil className="w-4 h-4" />
-                              </Button>
+                            <DialogTrigger
+                              render={<Button size="icon" variant="ghost" className="h-8 w-8" onClick={() => setEditTarget(expense)} />}
+                            >
+                              <Pencil className="w-4 h-4" />
                             </DialogTrigger>
                             <DialogContent>
                               <DialogHeader>

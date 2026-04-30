@@ -61,7 +61,7 @@ export async function GET(request: Request) {
   > = {}
 
   for (const s of unpaid) {
-    const inst = s.installments as { name: string } | null
+    const inst = (Array.isArray(s.installments) ? s.installments[0] : s.installments) as { name: string } | null
     if (!byUser[s.user_id]) byUser[s.user_id] = []
     byUser[s.user_id].push({
       installmentName: inst?.name ?? 'Cicilan',

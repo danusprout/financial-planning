@@ -12,7 +12,8 @@ import { register } from '@/app/actions/auth'
 type State = { error?: string } | undefined
 
 export default function RegisterPage() {
-  const [state, formAction, isPending] = useActionState<State, FormData>(register, undefined)
+  const wrappedRegister = (_: State, formData: FormData) => register(formData)
+  const [state, formAction, isPending] = useActionState<State, FormData>(wrappedRegister, undefined)
 
   return (
     <Card>

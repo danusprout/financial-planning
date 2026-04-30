@@ -50,8 +50,8 @@ export function ExpenseForm({
   banks,
 }: ExpenseFormProps) {
   const action = editId
-    ? (state: State, fd: FormData) => updateExpense(editId, fd)
-    : createExpense
+    ? (_: State, fd: FormData) => updateExpense(editId, fd)
+    : (_: State, fd: FormData) => createExpense(fd)
 
   const [state, formAction, isPending] = useActionState<State, FormData>(action, undefined)
 

@@ -23,7 +23,7 @@ export async function createGoal(formData: FormData) {
     target_amount: formData.get('target_amount') || null,
     target_date: formData.get('target_date') || null,
   })
-  if (!parsed.success) return { error: parsed.error.errors[0].message }
+  if (!parsed.success) return { error: parsed.error.issues[0].message }
 
   const { error } = await supabase.from('saving_goals').insert({
     user_id: user.id,
@@ -45,7 +45,7 @@ export async function updateGoal(id: string, formData: FormData) {
     target_amount: formData.get('target_amount') || null,
     target_date: formData.get('target_date') || null,
   })
-  if (!parsed.success) return { error: parsed.error.errors[0].message }
+  if (!parsed.success) return { error: parsed.error.issues[0].message }
 
   const { error } = await supabase
     .from('saving_goals')
@@ -95,7 +95,7 @@ export async function createSavingTransaction(goalId: string, formData: FormData
     amount: formData.get('amount'),
     note: formData.get('note') || undefined,
   })
-  if (!parsed.success) return { error: parsed.error.errors[0].message }
+  if (!parsed.success) return { error: parsed.error.issues[0].message }
 
   const { error } = await supabase.from('saving_transactions').insert({
     user_id: user.id,

@@ -24,7 +24,7 @@ export async function createCategory(formData: FormData) {
     group: formData.get('group'),
     color: formData.get('color') || undefined,
   })
-  if (!parsed.success) return { error: parsed.error.errors[0].message }
+  if (!parsed.success) return { error: parsed.error.issues[0].message }
 
   const { error } = await supabase
     .from('expense_categories')
@@ -48,7 +48,7 @@ export async function updateCategory(id: string, formData: FormData) {
     group: formData.get('group'),
     color: formData.get('color') || undefined,
   })
-  if (!parsed.success) return { error: parsed.error.errors[0].message }
+  if (!parsed.success) return { error: parsed.error.issues[0].message }
 
   const { error } = await supabase
     .from('expense_categories')
@@ -101,7 +101,7 @@ export async function createBank(formData: FormData) {
     type: formData.get('type'),
     color: formData.get('color') || undefined,
   })
-  if (!parsed.success) return { error: parsed.error.errors[0].message }
+  if (!parsed.success) return { error: parsed.error.issues[0].message }
 
   const { error } = await supabase
     .from('banks')
@@ -125,7 +125,7 @@ export async function updateBank(id: string, formData: FormData) {
     type: formData.get('type'),
     color: formData.get('color') || undefined,
   })
-  if (!parsed.success) return { error: parsed.error.errors[0].message }
+  if (!parsed.success) return { error: parsed.error.issues[0].message }
 
   const { error } = await supabase
     .from('banks')
