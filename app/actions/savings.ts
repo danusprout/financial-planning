@@ -31,7 +31,7 @@ export async function createGoal(formData: FormData) {
   })
   if (error) return { error: 'Gagal membuat tujuan tabungan.' }
 
-  revalidatePath('/app/savings')
+  revalidatePath('/savings')
   return { success: true }
 }
 
@@ -54,8 +54,8 @@ export async function updateGoal(id: string, formData: FormData) {
     .eq('user_id', user.id)
   if (error) return { error: 'Gagal mengubah tujuan tabungan.' }
 
-  revalidatePath('/app/savings')
-  revalidatePath(`/app/savings/${id}`)
+  revalidatePath('/savings')
+  revalidatePath(`/savings/${id}`)
   return { success: true }
 }
 
@@ -71,7 +71,7 @@ export async function toggleGoalActive(id: string, isActive: boolean) {
     .eq('user_id', user.id)
   if (error) return { error: 'Gagal mengubah status tabungan.' }
 
-  revalidatePath('/app/savings')
+  revalidatePath('/savings')
   return { success: true }
 }
 
@@ -104,8 +104,8 @@ export async function createSavingTransaction(goalId: string, formData: FormData
   })
   if (error) return { error: 'Gagal menambah mutasi tabungan.' }
 
-  revalidatePath(`/app/savings/${goalId}`)
-  revalidatePath('/app/savings')
+  revalidatePath(`/savings/${goalId}`)
+  revalidatePath('/savings')
   return { success: true }
 }
 
@@ -121,7 +121,7 @@ export async function deleteSavingTransaction(id: string, goalId: string) {
     .eq('user_id', user.id)
   if (error) return { error: 'Gagal menghapus mutasi.' }
 
-  revalidatePath(`/app/savings/${goalId}`)
-  revalidatePath('/app/savings')
+  revalidatePath(`/savings/${goalId}`)
+  revalidatePath('/savings')
   return { success: true }
 }

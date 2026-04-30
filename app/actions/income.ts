@@ -36,7 +36,7 @@ export async function createIncome(formData: FormData) {
   })
   if (error) return { error: 'Gagal menambah pemasukan.' }
 
-  revalidatePath('/app/income')
+  revalidatePath('/income')
   return { success: true }
 }
 
@@ -62,7 +62,7 @@ export async function updateIncome(id: string, formData: FormData) {
     .eq('user_id', user.id)
   if (error) return { error: 'Gagal mengubah pemasukan.' }
 
-  revalidatePath('/app/income')
+  revalidatePath('/income')
   return { success: true }
 }
 
@@ -78,6 +78,6 @@ export async function deleteIncome(id: string) {
     .eq('user_id', user.id)
   if (error) return { error: 'Gagal menghapus pemasukan.' }
 
-  revalidatePath('/app/income')
+  revalidatePath('/income')
   return { success: true }
 }

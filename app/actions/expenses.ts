@@ -34,7 +34,7 @@ export async function createExpense(formData: FormData) {
   })
   if (error) return { error: 'Gagal menambah pengeluaran.' }
 
-  revalidatePath('/app/expenses')
+  revalidatePath('/expenses')
   return { success: true }
 }
 
@@ -60,7 +60,7 @@ export async function updateExpense(id: string, formData: FormData) {
     .eq('user_id', user.id)
   if (error) return { error: 'Gagal mengubah pengeluaran.' }
 
-  revalidatePath('/app/expenses')
+  revalidatePath('/expenses')
   return { success: true }
 }
 
@@ -76,6 +76,6 @@ export async function deleteExpense(id: string) {
     .eq('user_id', user.id)
   if (error) return { error: 'Gagal menghapus pengeluaran.' }
 
-  revalidatePath('/app/expenses')
+  revalidatePath('/expenses')
   return { success: true }
 }

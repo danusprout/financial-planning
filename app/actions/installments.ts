@@ -73,7 +73,7 @@ export async function createInstallment(formData: FormData) {
     await supabase.from('installment_schedules').insert(schedules)
   }
 
-  revalidatePath('/app/installments')
+  revalidatePath('/installments')
   return { success: true }
 }
 
@@ -99,8 +99,8 @@ export async function updateInstallment(id: string, formData: FormData) {
     .eq('user_id', user.id)
   if (error) return { error: 'Gagal mengubah cicilan.' }
 
-  revalidatePath('/app/installments')
-  revalidatePath(`/app/installments/${id}`)
+  revalidatePath('/installments')
+  revalidatePath(`/installments/${id}`)
   return { success: true }
 }
 
@@ -116,7 +116,7 @@ export async function toggleInstallmentActive(id: string, isActive: boolean) {
     .eq('user_id', user.id)
   if (error) return { error: 'Gagal mengubah status cicilan.' }
 
-  revalidatePath('/app/installments')
+  revalidatePath('/installments')
   return { success: true }
 }
 
@@ -149,8 +149,8 @@ export async function createInstallmentPayment(installmentId: string, formData: 
   })
   if (error) return { error: 'Gagal menambah pembayaran.' }
 
-  revalidatePath(`/app/installments/${installmentId}`)
-  revalidatePath('/app/installments')
+  revalidatePath(`/installments/${installmentId}`)
+  revalidatePath('/installments')
   return { success: true }
 }
 
@@ -166,7 +166,7 @@ export async function deleteInstallmentPayment(id: string, installmentId: string
     .eq('user_id', user.id)
   if (error) return { error: 'Gagal menghapus pembayaran.' }
 
-  revalidatePath(`/app/installments/${installmentId}`)
-  revalidatePath('/app/installments')
+  revalidatePath(`/installments/${installmentId}`)
+  revalidatePath('/installments')
   return { success: true }
 }

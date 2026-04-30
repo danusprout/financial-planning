@@ -21,7 +21,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
         <div className="flex items-center justify-between px-4 h-12 max-w-lg mx-auto">
           <span className="font-bold text-sm">💰 Financial</span>
           <div className="flex items-center gap-1">
-            <Link href="/app/settings/categories" className={buttonVariants({ variant: 'ghost', size: 'icon', className: 'h-8 w-8' })}>
+            <Link href="/settings/categories" className={buttonVariants({ variant: 'ghost', size: 'icon', className: 'h-8 w-8' })}>
               <Settings className="w-4 h-4" />
             </Link>
             <form action={logout}>

@@ -98,7 +98,7 @@ export function ExpensesClient({
     p.set('month', activeMonth)
     if (params.category) p.set('category', params.category)
     if (params.bank) p.set('bank', params.bank)
-    return `/app/expenses?${p.toString()}`
+    return `/expenses?${p.toString()}`
   }
 
   const navigate = (month: string) =>

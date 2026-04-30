@@ -47,7 +47,7 @@ export function IncomeClient({ incomes, total, activeMonth }: IncomeClientProps)
   const [editTarget, setEditTarget] = useState<Income | null>(null)
   const [isPending, startTransition] = useTransition()
 
-  const navigate = (month: string) => router.push(`/app/income?month=${month}`)
+  const navigate = (month: string) => router.push(`/income?month=${month}`)
 
   const handleDelete = (id: string) => {
     if (!confirm('Hapus pemasukan ini?')) return

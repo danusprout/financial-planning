@@ -107,7 +107,7 @@ export function SavingDetailClient({ goal, transactions, balance }: Props) {
   return (
     <div className="space-y-6">
       {/* Back */}
-      <Link href="/app/savings" className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground">
+      <Link href="/savings" className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground">
         <ArrowLeft className="w-4 h-4" /> Semua Tabungan
       </Link>
 

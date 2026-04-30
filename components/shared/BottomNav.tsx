@@ -12,11 +12,11 @@ import {
 import { cn } from '@/lib/utils'
 
 const NAV_ITEMS = [
-  { href: '/app/dashboard', label: 'Dashboard', icon: LayoutDashboard },
-  { href: '/app/income', label: 'Pemasukan', icon: TrendingUp },
-  { href: '/app/expenses', label: 'Pengeluaran', icon: TrendingDown },
-  { href: '/app/savings', label: 'Tabungan', icon: PiggyBank },
-  { href: '/app/installments', label: 'Cicilan', icon: RefreshCw },
+  { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
+  { href: '/income', label: 'Pemasukan', icon: TrendingUp },
+  { href: '/expenses', label: 'Pengeluaran', icon: TrendingDown },
+  { href: '/savings', label: 'Tabungan', icon: PiggyBank },
+  { href: '/installments', label: 'Cicilan', icon: RefreshCw },
 ]
 
 export function BottomNav() {

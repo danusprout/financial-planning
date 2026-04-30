@@ -29,7 +29,7 @@ export async function login(formData: FormData) {
     return { error: 'Email atau password salah.' }
   }
 
-  redirect('/app/dashboard')
+  redirect('/dashboard')
 }
 
 export async function register(formData: FormData) {

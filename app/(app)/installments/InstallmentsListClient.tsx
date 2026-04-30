@@ -147,7 +147,7 @@ export function InstallmentsListClient({ rows, banks }: { rows: InstallmentRow[]
 function InstallmentRow({ row }: { row: InstallmentRow }) {
   return (
     <Link
-      href={`/app/installments/${row.id}`}
+      href={`/installments/${row.id}`}
       className="block rounded-lg border px-4 py-3 hover:bg-muted/50 transition-colors"
     >
       <div className="flex items-center justify-between mb-2">

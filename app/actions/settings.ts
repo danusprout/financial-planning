@@ -32,7 +32,7 @@ export async function createCategory(formData: FormData) {
 
   if (error) return { error: 'Gagal menambah kategori.' }
 
-  revalidatePath('/app/settings/categories')
+  revalidatePath('/settings/categories')
   return { success: true }
 }
 
@@ -58,7 +58,7 @@ export async function updateCategory(id: string, formData: FormData) {
 
   if (error) return { error: 'Gagal mengubah kategori.' }
 
-  revalidatePath('/app/settings/categories')
+  revalidatePath('/settings/categories')
   return { success: true }
 }
 
@@ -77,7 +77,7 @@ export async function deleteCategory(id: string) {
 
   if (error) return { error: 'Gagal menghapus kategori.' }
 
-  revalidatePath('/app/settings/categories')
+  revalidatePath('/settings/categories')
   return { success: true }
 }
 
@@ -109,7 +109,7 @@ export async function createBank(formData: FormData) {
 
   if (error) return { error: 'Gagal menambah bank.' }
 
-  revalidatePath('/app/settings/banks')
+  revalidatePath('/settings/banks')
   return { success: true }
 }
 
@@ -135,7 +135,7 @@ export async function updateBank(id: string, formData: FormData) {
 
   if (error) return { error: 'Gagal mengubah bank.' }
 
-  revalidatePath('/app/settings/banks')
+  revalidatePath('/settings/banks')
   return { success: true }
 }
 
@@ -154,6 +154,6 @@ export async function deleteBank(id: string) {
 
   if (error) return { error: 'Gagal menghapus bank.' }
 
-  revalidatePath('/app/settings/banks')
+  revalidatePath('/settings/banks')
   return { success: true }
 }

@@ -119,7 +119,7 @@ function GoalCard({ goal }: { goal: Goal }) {
 
   return (
     <Link
-      href={`/app/savings/${goal.id}`}
+      href={`/savings/${goal.id}`}
       className="flex items-center justify-between rounded-lg border px-4 py-3 hover:bg-muted/50 transition-colors"
     >
       <div className="min-w-0 flex-1">

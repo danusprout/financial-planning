@@ -160,7 +160,7 @@ export function InstallmentDetailClient({
 
   return (
     <div className="space-y-6">
-      <Link href="/app/installments" className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground">
+      <Link href="/installments" className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground">
         <ArrowLeft className="w-4 h-4" /> Semua Cicilan
       </Link>
 

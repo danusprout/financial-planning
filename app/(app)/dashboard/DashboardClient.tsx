@@ -56,7 +56,7 @@ export function DashboardClient({
   upcomingInstallments,
 }: Props) {
   const router = useRouter()
-  const navigate = (m: string) => router.push(`/app/dashboard?month=${m}`)
+  const navigate = (m: string) => router.push(`/dashboard?month=${m}`)
 
   return (
     <div className="space-y-6">

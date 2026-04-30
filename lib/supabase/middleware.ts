@@ -29,8 +29,9 @@ export async function updateSession(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser()
 
-  // Protect /app/* routes
-  const isAppRoute = request.nextUrl.pathname.startsWith('/app')
+  // Protected app routes (no /app/ prefix — Next.js route group (app) doesn't add it)
+  const protectedPrefixes = ['/dashboard', '/expenses', '/income', '/savings', '/installments', '/settings']
+  const isAppRoute = protectedPrefixes.some((p) => request.nextUrl.pathname.startsWith(p))
   const isAuthRoute = request.nextUrl.pathname.startsWith('/login') ||
     request.nextUrl.pathname.startsWith('/register') ||
     request.nextUrl.pathname.startsWith('/verify-email') ||
@@ -46,7 +47,7 @@ export async function updateSession(request: NextRequest) {
   // Redirect logged-in users away from auth pages
   if (isAuthRoute && user) {
     const url = request.nextUrl.clone()
-    url.pathname = '/app/dashboard'
+    url.pathname = '/dashboard'
     return NextResponse.redirect(url)
   }
 
