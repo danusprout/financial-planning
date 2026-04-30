@@ -1,10 +1,6 @@
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
-import { BottomNav } from '@/components/shared/BottomNav'
-import { Button, buttonVariants } from '@/components/ui/button'
-import Link from 'next/link'
-import { logout } from '@/app/actions/auth'
-import { Settings, LogOut } from 'lucide-react'
+import { Sidebar } from '@/components/shared/Sidebar'
 
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
   const supabase = await createClient()
@@ -16,29 +12,19 @@ export default async function AppLayout({ children }: { children: React.ReactNod
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Top header */}
-      <header className="sticky top-0 z-40 bg-background/80 backdrop-blur border-b">
-        <div className="flex items-center justify-between px-4 h-12 max-w-lg mx-auto">
-          <span className="font-bold text-sm">💰 Financial</span>
-          <div className="flex items-center gap-1">
-            <Link href="/settings/categories" className={buttonVariants({ variant: 'ghost', size: 'icon', className: 'h-8 w-8' })}>
-              <Settings className="w-4 h-4" />
-            </Link>
-            <form action={logout}>
-              <Button variant="ghost" size="icon" className="h-8 w-8" type="submit">
-                <LogOut className="w-4 h-4" />
-              </Button>
-            </form>
-          </div>
-        </div>
-      </header>
+      <Sidebar />
 
-      {/* Main content — padded for bottom nav */}
-      <main className="container mx-auto px-4 py-6 max-w-lg pb-24">
-        {children}
-      </main>
+      <div className="lg:pl-64">
+        {/* Mobile top header — spacer so content doesn't hide under hamburger */}
+        <header className="lg:hidden sticky top-0 z-30 bg-background/80 backdrop-blur border-b flex items-center px-4 h-14">
+          {/* 48px left padding to clear the hamburger button */}
+          <span className="pl-12 font-bold text-sm text-foreground">💰 Financial</span>
+        </header>
 
-      <BottomNav />
+        <main className="p-4 lg:p-8 max-w-6xl mx-auto">
+          {children}
+        </main>
+      </div>
     </div>
   )
 }
