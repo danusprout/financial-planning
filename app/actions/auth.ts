@@ -55,7 +55,7 @@ export async function register(formData: FormData) {
     password,
     options: {
       data: { full_name },
-      emailRedirectTo: `${appUrl}/verify-email`,
+      emailRedirectTo: `${appUrl}/auth/callback?next=/dashboard`,
     },
   })
 
@@ -88,7 +88,7 @@ export async function forgotPassword(formData: FormData) {
   }
 
   const { error } = await supabase.auth.resetPasswordForEmail(parsed.data.email, {
-    redirectTo: `${appUrl}/reset-password`,
+    redirectTo: `${appUrl}/auth/callback?next=/reset-password`,
   })
 
   if (error) {
