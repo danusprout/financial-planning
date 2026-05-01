@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import { buttonVariants } from '@/components/ui/button'
-import { TrendingUp, TrendingDown, PiggyBank, RefreshCw, Shield, BarChart3 } from 'lucide-react'
+import { TrendingUp, TrendingDown, PiggyBank, RefreshCw, Shield, BarChart3, Wallet } from 'lucide-react'
 
 const features = [
   {
@@ -45,7 +45,7 @@ export default function LandingPage() {
       <header className="border-b bg-white/80 backdrop-blur sticky top-0 z-50">
         <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
           <div className="flex items-center gap-2 font-bold text-lg text-blue-600">
-            <span>💰</span>
+            <Wallet className="w-6 h-6" />
             <span>Financial Planning</span>
           </div>
           <div className="flex gap-3">
@@ -164,7 +164,7 @@ export default function LandingPage() {
 
       <footer className="bg-gray-900 text-gray-400 text-center py-8 text-sm">
         <div className="max-w-6xl mx-auto px-6">
-          <p className="font-medium text-white mb-1">💰 Financial Planning</p>
+          <p className="font-medium text-white mb-1 flex items-center justify-center gap-2"><Wallet className="w-4 h-4" /> Financial Planning</p>
           <p>Data kamu aman — hanya kamu yang bisa mengaksesnya.</p>
         </div>
       </footer>

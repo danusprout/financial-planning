@@ -14,6 +14,8 @@ import {
   Menu,
   X,
   BookOpen,
+  Wallet,
+  Languages,
 } from 'lucide-react'
 import { logout } from '@/app/actions/auth'
 import { cn } from '@/lib/utils'
@@ -35,7 +37,7 @@ function NavContent({ pathname, onClose }: { pathname: string; onClose?: () => v
     <div className="flex flex-col h-full">
       {/* Logo */}
       <div className="flex items-center gap-2 px-6 h-16 border-b border-border/50">
-        <span className="text-xl">💰</span>
+        <Wallet className="w-6 h-6 text-primary" />
         <span className="font-bold text-lg text-foreground">Financial</span>
       </div>
 
@@ -70,7 +72,7 @@ function NavContent({ pathname, onClose }: { pathname: string; onClose?: () => v
           onClick={() => setLang(lang === 'en' ? 'id' : 'en')}
           className="flex items-center gap-3 px-3 py-2.5 text-sm font-medium w-full text-left transition-colors rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground"
         >
-          <span className="text-base leading-none">{lang === 'en' ? '🇮🇩' : '🇬🇧'}</span>
+          <Languages className="w-5 h-5 flex-shrink-0" />
           {lang === 'en' ? 'Bahasa Indonesia' : 'English'}
         </button>
         <Link

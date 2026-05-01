@@ -16,7 +16,7 @@ import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Badge } from '@/components/ui/badge'
 import { createGoal, createSavingTransaction, deleteSavingTransaction } from '@/app/actions/savings'
 import { formatIDR, formatDate } from '@/lib/format'
-import { PlusIcon, Trash2, TrendingDown, TrendingUp, Target, ChevronRight } from 'lucide-react'
+import { PlusIcon, Trash2, TrendingDown, TrendingUp, Target, ChevronRight, CalendarDays, LogOut as WithdrawIcon } from 'lucide-react'
 import Link from 'next/link'
 
 type Tx = {
@@ -346,7 +346,13 @@ export function SavingsClient({ goals }: { goals: Goal[] }) {
                   : 'text-muted-foreground hover:text-foreground'
               }`}
             >
-              {t === 'goals' ? '🎯 Goals' : t === 'monthly' ? '📅 Monthly' : '📤 Withdrawals'}
+              {t === 'goals' ? (
+                <><Target className="w-4 h-4 mr-1.5 inline-block" />Goals</>
+              ) : t === 'monthly' ? (
+                <><CalendarDays className="w-4 h-4 mr-1.5 inline-block" />Monthly</>
+              ) : (
+                <><WithdrawIcon className="w-4 h-4 mr-1.5 inline-block" />Withdrawals</>
+              )}
             </button>
           ))}
         </div>
