@@ -30,7 +30,7 @@ export async function updateSession(request: NextRequest) {
   } = await supabase.auth.getUser()
 
   // Protected app routes (no /app/ prefix — Next.js route group (app) doesn't add it)
-  const protectedPrefixes = ['/dashboard', '/expenses', '/income', '/savings', '/installments', '/settings']
+  const protectedPrefixes = ['/dashboard', '/budget', '/expenses', '/income', '/savings', '/installments', '/settings']
   const isAppRoute = protectedPrefixes.some((p) => request.nextUrl.pathname.startsWith(p))
   const isAuthRoute = request.nextUrl.pathname.startsWith('/login') ||
     request.nextUrl.pathname.startsWith('/register') ||

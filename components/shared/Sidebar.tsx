@@ -13,19 +13,24 @@ import {
   LogOut,
   Menu,
   X,
+  BookOpen,
 } from 'lucide-react'
 import { logout } from '@/app/actions/auth'
 import { cn } from '@/lib/utils'
+import { useLang } from '@/lib/i18n'
 
 const navItems = [
-  { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
-  { href: '/income', label: 'Pemasukan', icon: TrendingUp },
-  { href: '/expenses', label: 'Pengeluaran', icon: TrendingDown },
-  { href: '/savings', label: 'Tabungan', icon: PiggyBank },
-  { href: '/installments', label: 'Cicilan', icon: RefreshCw },
+  { href: '/dashboard', labelKey: 'dashboard' as const, icon: LayoutDashboard },
+  { href: '/budget', labelKey: 'budget' as const, icon: BookOpen },
+  { href: '/income', labelKey: 'income' as const, icon: TrendingUp },
+  { href: '/expenses', labelKey: 'expenses' as const, icon: TrendingDown },
+  { href: '/savings', labelKey: 'savings' as const, icon: PiggyBank },
+  { href: '/installments', labelKey: 'installments' as const, icon: RefreshCw },
 ]
 
 function NavContent({ pathname, onClose }: { pathname: string; onClose?: () => void }) {
+  const { lang, setLang, t } = useLang()
+
   return (
     <div className="flex flex-col h-full">
       {/* Logo */}
@@ -52,7 +57,7 @@ function NavContent({ pathname, onClose }: { pathname: string; onClose?: () => v
               )}
             >
               <Icon className="w-5 h-5 flex-shrink-0" />
-              {item.label}
+              {t[item.labelKey]}
             </Link>
           )
         })}
@@ -60,6 +65,14 @@ function NavContent({ pathname, onClose }: { pathname: string; onClose?: () => v
 
       {/* Bottom section */}
       <div className="px-3 pb-6 space-y-1 border-t border-border/50 pt-4">
+        {/* Language toggle */}
+        <button
+          onClick={() => setLang(lang === 'en' ? 'id' : 'en')}
+          className="flex items-center gap-3 px-3 py-2.5 text-sm font-medium w-full text-left transition-colors rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground"
+        >
+          <span className="text-base leading-none">{lang === 'en' ? '🇮🇩' : '🇬🇧'}</span>
+          {lang === 'en' ? 'Bahasa Indonesia' : 'English'}
+        </button>
         <Link
           href="/settings/categories"
           onClick={onClose}
@@ -71,7 +84,7 @@ function NavContent({ pathname, onClose }: { pathname: string; onClose?: () => v
           )}
         >
           <Settings className="w-5 h-5 flex-shrink-0" />
-          Pengaturan
+          {t.settings}
         </Link>
         <form action={logout}>
           <button
@@ -79,7 +92,7 @@ function NavContent({ pathname, onClose }: { pathname: string; onClose?: () => v
             className="flex items-center gap-3 px-3 py-2.5 text-sm font-medium w-full text-left transition-colors rounded-lg text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
           >
             <LogOut className="w-5 h-5 flex-shrink-0" />
-            Keluar
+            {t.logout}
           </button>
         </form>
       </div>
