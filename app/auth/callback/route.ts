@@ -7,8 +7,9 @@ export async function GET(request: Request) {
   const code = searchParams.get('code')
   const tokenHash = searchParams.get('token_hash')
   const type = searchParams.get('type')
-  const next = searchParams.get('next') ?? '/dashboard'
-  const safeNext = next.startsWith('/') ? next : '/dashboard'
+  const next = searchParams.get('next')
+  const fallbackNext = type === 'recovery' ? '/reset-password' : '/dashboard'
+  const safeNext = next?.startsWith('/') ? next : fallbackNext
   const supabase = await createClient()
 
   if (code) {

@@ -55,7 +55,7 @@ export async function register(formData: FormData) {
     password,
     options: {
       data: { full_name },
-      emailRedirectTo: `${appUrl}/auth/callback?next=/dashboard`,
+      emailRedirectTo: `${appUrl}/auth/callback`,
     },
   })
 
@@ -63,7 +63,10 @@ export async function register(formData: FormData) {
     if (error.message.includes('already registered')) {
       return { error: 'Email sudah terdaftar.' }
     }
-    return { error: 'Gagal mendaftar. Coba lagi.' }
+    if (error.message.includes('redirect')) {
+      return { error: 'Konfigurasi redirect auth belum valid. Cek URL Configuration di Supabase.' }
+    }
+    return { error: error.message || 'Gagal mendaftar. Coba lagi.' }
   }
 
   redirect('/verify-email')
@@ -88,11 +91,14 @@ export async function forgotPassword(formData: FormData) {
   }
 
   const { error } = await supabase.auth.resetPasswordForEmail(parsed.data.email, {
-    redirectTo: `${appUrl}/auth/callback?next=/reset-password`,
+    redirectTo: `${appUrl}/auth/callback`,
   })
 
   if (error) {
-    return { error: 'Gagal mengirim email reset password.' }
+    if (error.message.includes('redirect')) {
+      return { error: 'Konfigurasi redirect auth belum valid. Cek URL Configuration di Supabase.' }
+    }
+    return { error: error.message || 'Gagal mengirim email reset password.' }
   }
 
   return { success: true }
