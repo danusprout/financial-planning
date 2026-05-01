@@ -18,6 +18,7 @@ export function InstallmentReminder({ userName, items, appUrl }: InstallmentRemi
 
   return (
     <html lang="id">
+      {/* eslint-disable-next-line @next/next/no-head-element */}
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />

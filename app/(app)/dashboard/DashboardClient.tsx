@@ -2,7 +2,6 @@
 
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
 import {
   PieChart,
   Pie,
@@ -124,7 +123,7 @@ export function DashboardClient({
                 cx="50%"
                 cy="50%"
                 outerRadius={90}
-                label={({ name, percent }: { name?: string; percent?: number }) =>
+                label={({ percent }: { percent?: number }) =>
                   (percent ?? 0) > 0.05 ? `${((percent ?? 0) * 100).toFixed(0)}%` : ''
                 }
                 labelLine={false}
