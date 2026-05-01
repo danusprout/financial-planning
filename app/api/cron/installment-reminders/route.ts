@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
 import { renderInstallmentReminder } from '@/lib/email/templates'
 import { sendEmail } from '@/lib/email/send'
+import { getAppUrl } from '@/lib/app-url'
 
 // Vercel Cron: 0 2 * * * UTC = 09:00 WIB
 // Protected by CRON_SECRET header (Vercel injects automatically)
@@ -71,7 +72,7 @@ export async function GET(request: Request) {
   }
 
   let sent = 0
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000'
+  const appUrl = getAppUrl()
 
   for (const [userId, items] of Object.entries(byUser)) {
     // Get user email from auth.users

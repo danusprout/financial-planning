@@ -44,6 +44,8 @@ type Expense = {
   banks: Bank | null
 }
 
+const ALL_FILTER_VALUE = '__all__'
+
 interface ExpensesClientProps {
   expenses: Expense[]
   categories: Category[]
@@ -147,10 +149,11 @@ export function ExpensesClient({
       <div className="flex gap-2 items-center">
         <SlidersHorizontal className="w-4 h-4 text-muted-foreground flex-shrink-0" />
         <Select
-          value={filterCategory ?? ''}
-          onValueChange={(v) =>
-            router.push(buildUrl({ category: v || undefined, bank: filterBank }))
-          }
+          value={filterCategory ?? ALL_FILTER_VALUE}
+          onValueChange={(v) => {
+            const nextCategory = !v || v === ALL_FILTER_VALUE ? undefined : v
+            router.push(buildUrl({ category: nextCategory, bank: filterBank ?? undefined }))
+          }}
         >
           <SelectTrigger className="h-8 text-xs flex-1">
             <span className={filterCategory ? 'text-foreground' : 'text-muted-foreground'}>
@@ -160,7 +163,7 @@ export function ExpensesClient({
             </span>
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="">{t.allCategories}</SelectItem>
+            <SelectItem value={ALL_FILTER_VALUE}>{t.allCategories}</SelectItem>
             {categories.map((c) => (
               <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>
             ))}
@@ -168,10 +171,11 @@ export function ExpensesClient({
         </Select>
 
         <Select
-          value={filterBank ?? ''}
-          onValueChange={(v) =>
-            router.push(buildUrl({ bank: v || undefined, category: filterCategory }))
-          }
+          value={filterBank ?? ALL_FILTER_VALUE}
+          onValueChange={(v) => {
+            const nextBank = !v || v === ALL_FILTER_VALUE ? undefined : v
+            router.push(buildUrl({ bank: nextBank, category: filterCategory ?? undefined }))
+          }}
         >
           <SelectTrigger className="h-8 text-xs flex-1">
             <span className={filterBank ? 'text-foreground' : 'text-muted-foreground'}>
@@ -181,7 +185,7 @@ export function ExpensesClient({
             </span>
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="">{t.allPaymentSources}</SelectItem>
+            <SelectItem value={ALL_FILTER_VALUE}>{t.allPaymentSources}</SelectItem>
             {banks.map((b) => (
               <SelectItem key={b.id} value={b.id}>{b.name}</SelectItem>
             ))}

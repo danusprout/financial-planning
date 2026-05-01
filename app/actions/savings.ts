@@ -109,6 +109,31 @@ export async function createSavingTransaction(goalId: string, formData: FormData
   return { success: true }
 }
 
+export async function updateSavingTransaction(id: string, goalId: string, formData: FormData) {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return { error: 'Unauthorized' }
+
+  const parsed = txSchema.safeParse({
+    date: formData.get('date'),
+    type: formData.get('type'),
+    amount: formData.get('amount'),
+    note: formData.get('note') || undefined,
+  })
+  if (!parsed.success) return { error: parsed.error.issues[0].message }
+
+  const { error } = await supabase
+    .from('saving_transactions')
+    .update(parsed.data)
+    .eq('id', id)
+    .eq('user_id', user.id)
+  if (error) return { error: 'Gagal mengubah mutasi.' }
+
+  revalidatePath(`/savings/${goalId}`)
+  revalidatePath('/savings')
+  return { success: true }
+}
+
 export async function deleteSavingTransaction(id: string, goalId: string) {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()

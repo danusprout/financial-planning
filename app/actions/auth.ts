@@ -2,6 +2,7 @@
 
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
+import { getAppUrl } from '@/lib/app-url'
 import {
   loginSchema,
   registerSchema,
@@ -34,6 +35,7 @@ export async function login(formData: FormData) {
 
 export async function register(formData: FormData) {
   const supabase = await createClient()
+  const appUrl = getAppUrl()
 
   const parsed = registerSchema.safeParse({
     full_name: formData.get('full_name'),
@@ -53,7 +55,7 @@ export async function register(formData: FormData) {
     password,
     options: {
       data: { full_name },
-      emailRedirectTo: `${process.env.NEXT_PUBLIC_APP_URL}/verify-email`,
+      emailRedirectTo: `${appUrl}/verify-email`,
     },
   })
 
@@ -75,6 +77,7 @@ export async function logout() {
 
 export async function forgotPassword(formData: FormData) {
   const supabase = await createClient()
+  const appUrl = getAppUrl()
 
   const parsed = forgotPasswordSchema.safeParse({
     email: formData.get('email'),
@@ -85,7 +88,7 @@ export async function forgotPassword(formData: FormData) {
   }
 
   const { error } = await supabase.auth.resetPasswordForEmail(parsed.data.email, {
-    redirectTo: `${process.env.NEXT_PUBLIC_APP_URL}/reset-password`,
+    redirectTo: `${appUrl}/reset-password`,
   })
 
   if (error) {

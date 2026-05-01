@@ -1,6 +1,6 @@
 'use client'
 
-import { useActionState } from 'react'
+import { useActionState, useState } from 'react'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Button } from '@/components/ui/button'
@@ -18,6 +18,8 @@ type State = { error?: string; success?: boolean } | undefined
 
 type Category = { id: string; name: string; group: string; color: string | null }
 type Bank = { id: string; name: string; type: string }
+
+const UNASSIGNED_VALUE = '__none__'
 
 interface ExpenseFormProps {
   onSuccess?: () => void
@@ -56,6 +58,9 @@ export function ExpenseForm({
   const [state, formAction, isPending] = useActionState<State, FormData>(action, undefined)
 
   if (state?.success) onSuccess?.()
+
+  const [categoryValue, setCategoryValue] = useState(defaultValues?.category_id ?? UNASSIGNED_VALUE)
+  const [bankValue, setBankValue] = useState(defaultValues?.bank_id ?? UNASSIGNED_VALUE)
 
   return (
     <form action={formAction} className="space-y-4">
@@ -103,12 +108,15 @@ export function ExpenseForm({
 
       <div className="space-y-2">
         <Label htmlFor="exp-category">Kategori</Label>
-        <Select name="category_id" defaultValue={defaultValues?.category_id ?? ''}>
+        <Select
+          value={categoryValue}
+          onValueChange={(value) => setCategoryValue(value ?? UNASSIGNED_VALUE)}
+        >
           <SelectTrigger id="exp-category">
             <SelectValue placeholder="Pilih kategori" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="">— Tanpa kategori —</SelectItem>
+            <SelectItem value={UNASSIGNED_VALUE}>— Tanpa kategori —</SelectItem>
             {['needs', 'wants', 'obligations'].map((group) => {
               const items = categories.filter((c) => c.group === group)
               if (items.length === 0) return null
@@ -127,16 +135,24 @@ export function ExpenseForm({
             })}
           </SelectContent>
         </Select>
+        <input
+          type="hidden"
+          name="category_id"
+          value={categoryValue === UNASSIGNED_VALUE ? '' : categoryValue}
+        />
       </div>
 
       <div className="space-y-2">
         <Label htmlFor="exp-bank">Sumber Dana</Label>
-        <Select name="bank_id" defaultValue={defaultValues?.bank_id ?? ''}>
+        <Select
+          value={bankValue}
+          onValueChange={(value) => setBankValue(value ?? UNASSIGNED_VALUE)}
+        >
           <SelectTrigger id="exp-bank">
             <SelectValue placeholder="Pilih sumber dana" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="">— Tanpa sumber dana —</SelectItem>
+            <SelectItem value={UNASSIGNED_VALUE}>— Tanpa sumber dana —</SelectItem>
             {banks.map((b) => (
               <SelectItem key={b.id} value={b.id}>
                 {b.name}
@@ -144,6 +160,11 @@ export function ExpenseForm({
             ))}
           </SelectContent>
         </Select>
+        <input
+          type="hidden"
+          name="bank_id"
+          value={bankValue === UNASSIGNED_VALUE ? '' : bankValue}
+        />
       </div>
 
       <div className="space-y-2">
