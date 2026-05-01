@@ -26,8 +26,13 @@ export default async function BudgetPage({ searchParams }: Props) {
   // 2. Budgets for the month
   const { data: budgets } = await supabase
     .from('budgets')
-    .select('category_id, estimated_amount')
+    .select('category_id, estimated_amount, bank_id')
     .eq('month', monthStart)
+
+  const { data: banks } = await supabase
+    .from('banks')
+    .select('id, name, type, color')
+    .order('name')
 
   // 3. Paid expenses for the month → group by category_id for realisasi
   const { data: expenses } = await supabase
@@ -60,7 +65,7 @@ export default async function BudgetPage({ searchParams }: Props) {
   // 7. Active installments
   const { data: installments } = await supabase
     .from('installments')
-    .select('id, name, monthly_amount')
+    .select('id, name, monthly_amount, bank_id')
     .eq('is_active', true)
     .order('created_at', { ascending: true })
 
@@ -75,8 +80,12 @@ export default async function BudgetPage({ searchParams }: Props) {
 
   // Budget map: category_id → estimated_amount
   const budgetMap: Record<string, number> = {}
+  const budgetBankMap: Record<string, string | null> = {}
   for (const b of budgets ?? []) {
-    if (b.category_id) budgetMap[b.category_id] = Number(b.estimated_amount)
+    if (b.category_id) {
+      budgetMap[b.category_id] = Number(b.estimated_amount)
+      budgetBankMap[b.category_id] = b.bank_id
+    }
   }
 
   // Expense realisasi map: category_id → sum of paid amounts
@@ -104,7 +113,9 @@ export default async function BudgetPage({ searchParams }: Props) {
     <BudgetClient
       activeMonth={activeMonth}
       categories={categories ?? []}
+      banks={banks ?? []}
       budgetMap={budgetMap}
+      budgetBankMap={budgetBankMap}
       expenseRealisasiMap={expenseRealisasiMap}
       incomes={incomes ?? []}
       savingGoals={savingGoals ?? []}

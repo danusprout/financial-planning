@@ -3,7 +3,7 @@
 import { useState, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
 import { ChevronLeft, ChevronRight, Loader2 } from 'lucide-react'
-import { upsertBudget } from '@/app/actions/budget'
+import { upsertBudget, upsertBudgetBank } from '@/app/actions/budget'
 import { formatIDR } from '@/lib/format'
 import { useLang } from '@/lib/i18n'
 import { cn } from '@/lib/utils'
@@ -24,6 +24,13 @@ interface Income {
   note: string | null
 }
 
+interface Bank {
+  id: string
+  name: string
+  type: string
+  color: string | null
+}
+
 interface SavingGoal {
   id: string
   name: string
@@ -35,12 +42,15 @@ interface Installment {
   id: string
   name: string
   monthly_amount: number
+  bank_id: string | null
 }
 
 interface Props {
   activeMonth: string
   categories: Category[]
+  banks: Bank[]
   budgetMap: Record<string, number>
+  budgetBankMap: Record<string, string | null>
   expenseRealisasiMap: Record<string, number>
   incomes: Income[]
   savingGoals: SavingGoal[]
@@ -48,6 +58,8 @@ interface Props {
   installments: Installment[]
   installmentRealisasiMap: Record<string, number>
 }
+
+const UNASSIGNED_BANK = '__none__'
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -125,6 +137,48 @@ function EstimasiCell({
   )
 }
 
+function BankSourceCell({
+  categoryId,
+  month,
+  initialBankId,
+  banks,
+}: {
+  categoryId: string
+  month: string
+  initialBankId: string | null
+  banks: Bank[]
+}) {
+  const [value, setValue] = useState(initialBankId ?? UNASSIGNED_BANK)
+  const [pending, startTransition] = useTransition()
+
+  return (
+    <div className="relative">
+      <select
+        value={value === UNASSIGNED_BANK ? '' : value}
+        onChange={(event) => {
+          const nextValue = event.target.value || UNASSIGNED_BANK
+          setValue(nextValue)
+          startTransition(async () => {
+            await upsertBudgetBank(categoryId, month, nextValue === UNASSIGNED_BANK ? null : nextValue)
+          })
+        }}
+        className={cn(
+          'h-9 w-full appearance-none rounded-xl border border-slate-200 bg-stone-50 px-3 pr-8 text-sm text-slate-900 outline-none transition-colors focus:border-ring focus:ring-2 focus:ring-ring/30',
+          pending && 'opacity-60'
+        )}
+      >
+        <option value="">{'— Tidak ada —'}</option>
+        {banks.map((bank) => (
+          <option key={bank.id} value={bank.id}>
+            {bank.name}
+          </option>
+        ))}
+      </select>
+      {pending && <Loader2 className="pointer-events-none absolute right-2 top-1/2 h-3.5 w-3.5 -translate-y-1/2 animate-spin text-slate-400" />}
+    </div>
+  )
+}
+
 // ─── Progress Bar ─────────────────────────────────────────────────────────────
 
 function ProgressBar({ estimasi, realisasi }: { estimasi: number; realisasi: number }) {
@@ -163,7 +217,7 @@ function SectionHeader({
 }) {
   return (
     <tr className={cn(color, 'text-white')}>
-      <td colSpan={6} className="px-4 py-2 font-bold text-xs uppercase tracking-wider">
+      <td colSpan={7} className="px-4 py-2 font-bold text-xs uppercase tracking-wider">
         {label}
       </td>
     </tr>
@@ -198,6 +252,7 @@ function TotalRow({
         )}
       </td>
       <td />
+      <td />
     </tr>
   )
 }
@@ -207,7 +262,9 @@ function TotalRow({
 export function BudgetClient({
   activeMonth,
   categories,
+  banks,
   budgetMap,
+  budgetBankMap,
   expenseRealisasiMap,
   incomes,
   savingGoals,
@@ -259,6 +316,31 @@ export function BudgetClient({
   )
   // Estimasi for savings: no budget concept — show sum of goal realisasi as estimasi too
   const totalSavingEstimasi = totalSavingRealisasi
+
+  const budgetByBankMap: Record<string, { name: string; color: string | null; total: number }> = {}
+  for (const cat of categories) {
+    const amount = budgetMap[cat.id] ?? 0
+    const bankId = budgetBankMap[cat.id]
+    if (!bankId || amount <= 0) continue
+    const bank = banks.find((item) => item.id === bankId)
+    if (!bank) continue
+    if (!budgetByBankMap[bank.id]) {
+      budgetByBankMap[bank.id] = { name: bank.name, color: bank.color, total: 0 }
+    }
+    budgetByBankMap[bank.id].total += amount
+  }
+
+  for (const inst of installments) {
+    if (!inst.bank_id) continue
+    const bank = banks.find((item) => item.id === inst.bank_id)
+    if (!bank) continue
+    if (!budgetByBankMap[bank.id]) {
+      budgetByBankMap[bank.id] = { name: bank.name, color: bank.color, total: 0 }
+    }
+    budgetByBankMap[bank.id].total += Number(inst.monthly_amount)
+  }
+
+  const bankAllocations = Object.values(budgetByBankMap).sort((a, b) => b.total - a.total)
 
   // ─── Summary ────────────────────────────────────────────────────────────
   const totalExpenseEstimasi =
@@ -314,6 +396,7 @@ export function BudgetClient({
               <th className="text-right py-3 px-4 font-semibold w-36">{t.budgetEst}</th>
               <th className="text-right py-3 px-4 font-semibold w-36">{t.actual}</th>
               <th className="text-left py-3 px-4 font-semibold w-36">{t.progress}</th>
+              <th className="text-left py-3 px-4 font-semibold w-52">{t.paymentSource}</th>
               <th className="text-left py-3 px-4 font-semibold">{t.notes}</th>
             </tr>
           </thead>
@@ -325,7 +408,7 @@ export function BudgetClient({
             {incomes.length === 0 ? (
               <tr>
                 <td />
-                <td colSpan={5} className="px-4 py-3 text-muted-foreground italic text-xs">
+                <td colSpan={6} className="px-4 py-3 text-muted-foreground italic text-xs">
                   Belum ada pemasukan bulan ini. Tambah di halaman Pemasukan.
                 </td>
               </tr>
@@ -340,6 +423,7 @@ export function BudgetClient({
                   <td className="text-right px-4 py-2.5 tabular-nums text-emerald-600 font-medium">
                     {formatIDR(Number(inc.amount))}
                   </td>
+                  <td />
                   <td />
                   <td className="px-4 py-2.5 text-xs text-muted-foreground">{inc.note ?? ''}</td>
                 </tr>
@@ -382,6 +466,14 @@ export function BudgetClient({
                   </td>
                   <td className="px-4 py-2.5">
                     <ProgressBar estimasi={est} realisasi={real} />
+                  </td>
+                  <td className="px-4 py-2.5">
+                    <BankSourceCell
+                      categoryId={cat.id}
+                      month={activeMonth}
+                      initialBankId={budgetBankMap[cat.id] ?? null}
+                      banks={banks}
+                    />
                   </td>
                   <td />
                 </tr>
@@ -427,6 +519,14 @@ export function BudgetClient({
                   <td className="px-4 py-2.5">
                     <ProgressBar estimasi={est} realisasi={real} />
                   </td>
+                  <td className="px-4 py-2.5">
+                    <BankSourceCell
+                      categoryId={cat.id}
+                      month={activeMonth}
+                      initialBankId={budgetBankMap[cat.id] ?? null}
+                      banks={banks}
+                    />
+                  </td>
                   <td />
                 </tr>
               )
@@ -458,6 +558,9 @@ export function BudgetClient({
                   </td>
                   <td className="px-4 py-2.5">
                     <ProgressBar estimasi={est} realisasi={real} />
+                  </td>
+                  <td className="px-4 py-2.5 text-sm text-muted-foreground">
+                    {banks.find((bank) => bank.id === inst.bank_id)?.name ?? '—'}
                   </td>
                   <td />
                 </tr>
@@ -502,6 +605,14 @@ export function BudgetClient({
                   <td className="px-4 py-2.5">
                     <ProgressBar estimasi={est} realisasi={real} />
                   </td>
+                  <td className="px-4 py-2.5">
+                    <BankSourceCell
+                      categoryId={cat.id}
+                      month={activeMonth}
+                      initialBankId={budgetBankMap[cat.id] ?? null}
+                      banks={banks}
+                    />
+                  </td>
                   <td />
                 </tr>
               )
@@ -520,7 +631,7 @@ export function BudgetClient({
             {savingGoals.length === 0 ? (
               <tr>
                 <td />
-                <td colSpan={5} className="px-4 py-3 text-muted-foreground italic text-xs">
+                <td colSpan={6} className="px-4 py-3 text-muted-foreground italic text-xs">
                   Belum ada tujuan tabungan aktif.
                 </td>
               </tr>
@@ -536,13 +647,14 @@ export function BudgetClient({
                     <td className="text-right px-4 py-2.5 tabular-nums text-muted-foreground">
                       {formatIDR(real)}
                     </td>
-                    <td className="text-right px-4 py-2.5 tabular-nums font-medium text-teal-600">
-                      {formatIDR(real)}
-                    </td>
-                    <td />
-                    <td className="px-4 py-2.5 text-xs text-muted-foreground">
-                      {goal.target_amount ? `Target: ${formatIDR(Number(goal.target_amount))}` : ''}
-                    </td>
+                  <td className="text-right px-4 py-2.5 tabular-nums font-medium text-teal-600">
+                    {formatIDR(real)}
+                  </td>
+                  <td />
+                  <td />
+                  <td className="px-4 py-2.5 text-xs text-muted-foreground">
+                    {goal.target_amount ? `Target: ${formatIDR(Number(goal.target_amount))}` : ''}
+                  </td>
                   </tr>
                 )
               })
@@ -579,6 +691,7 @@ export function BudgetClient({
                 <ProgressBar estimasi={totalIncomeRealisasi} realisasi={totalExpenseRealisasi} />
               </td>
               <td />
+              <td />
             </tr>
 
             <tr className="hover:bg-muted/20">
@@ -588,6 +701,7 @@ export function BudgetClient({
               <td className="text-right px-4 py-2.5 tabular-nums text-teal-600 font-medium">
                 {formatIDR(totalSavingRealisasi)}
               </td>
+              <td />
               <td />
               <td />
             </tr>
@@ -606,6 +720,7 @@ export function BudgetClient({
                 {formatIDR(sisaSaldo)}
               </td>
               <td />
+              <td />
               <td className="px-4 py-3 text-xs text-muted-foreground">
                 {sisaSaldo >= 0 ? 'Surplus' : 'Defisit'}
               </td>
@@ -619,6 +734,35 @@ export function BudgetClient({
         Klik pada kolom <strong>{t.budgetEst}</strong> untuk mengedit anggaran kategori.
         Data {t.actual} dihitung otomatis dari transaksi yang sudah terjadi.
       </p>
+
+      <div className="rounded-xl border border-border bg-card p-4 shadow-sm">
+        <h2 className="text-sm font-semibold text-foreground">Alokasi Budget per Sumber Dana</h2>
+        {bankAllocations.length === 0 ? (
+          <p className="mt-2 text-xs text-muted-foreground">
+            Belum ada sumber dana yang dipilih di rincian anggaran bulan ini.
+          </p>
+        ) : (
+          <div className="mt-4 grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+            {bankAllocations.map((bank) => (
+              <div
+                key={bank.name}
+                className="rounded-lg border border-border bg-muted/30 px-4 py-3"
+              >
+                <div className="flex items-center gap-2">
+                  <span
+                    className="h-2.5 w-2.5 rounded-full"
+                    style={{ backgroundColor: bank.color ?? '#64748b' }}
+                  />
+                  <span className="text-sm font-medium text-foreground">{bank.name}</span>
+                </div>
+                <p className="mt-2 text-lg font-semibold text-foreground">
+                  {formatIDR(bank.total)}
+                </p>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   )
 }

@@ -171,6 +171,7 @@ export interface Database {
           user_id: string
           month: string
           category_id: string | null
+          bank_id: string | null
           estimated_amount: number
           created_at: string
         }
@@ -179,6 +180,7 @@ export interface Database {
           user_id: string
           month: string
           category_id?: string | null
+          bank_id?: string | null
           estimated_amount: number
           created_at?: string
         }
@@ -187,6 +189,7 @@ export interface Database {
           user_id?: string
           month?: string
           category_id?: string | null
+          bank_id?: string | null
           estimated_amount?: number
           created_at?: string
         }
@@ -196,6 +199,13 @@ export interface Database {
             columns: ['category_id']
             isOneToOne: false
             referencedRelation: 'expense_categories'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'budgets_bank_id_fkey'
+            columns: ['bank_id']
+            isOneToOne: false
+            referencedRelation: 'banks'
             referencedColumns: ['id']
           },
         ]
