@@ -5,13 +5,6 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Button } from '@/components/ui/button'
 import { Alert, AlertDescription } from '@/components/ui/alert'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
 import { createExpense, updateExpense } from '@/app/actions/expenses'
 
 type State = { error?: string; success?: boolean } | undefined
@@ -42,6 +35,9 @@ const STATUS_LABELS = {
   pending: 'Pending',
   planned: 'Direncanakan',
 }
+
+const nativeSelectClassName =
+  'flex h-11 w-full rounded-2xl border border-slate-200 bg-stone-50 px-4 text-sm text-slate-900 outline-none transition-colors focus:border-ring focus:ring-3 focus:ring-ring/50'
 
 export function ExpenseForm({
   onSuccess,
@@ -108,79 +104,63 @@ export function ExpenseForm({
 
       <div className="space-y-2">
         <Label htmlFor="exp-category">Kategori</Label>
-        <Select
-          value={categoryValue}
-          onValueChange={(value) => setCategoryValue(value ?? UNASSIGNED_VALUE)}
-        >
-          <SelectTrigger id="exp-category">
-            <SelectValue placeholder="Pilih kategori" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value={UNASSIGNED_VALUE}>— Tanpa kategori —</SelectItem>
-            {['needs', 'wants', 'obligations'].map((group) => {
-              const items = categories.filter((c) => c.group === group)
-              if (items.length === 0) return null
-              return (
-                <div key={group}>
-                  <div className="px-2 py-1 text-xs font-semibold text-muted-foreground uppercase">
-                    {group}
-                  </div>
-                  {items.map((c) => (
-                    <SelectItem key={c.id} value={c.id}>
-                      {c.name}
-                    </SelectItem>
-                  ))}
-                </div>
-              )
-            })}
-          </SelectContent>
-        </Select>
-        <input
-          type="hidden"
+        <select
+          id="exp-category"
           name="category_id"
+          className={nativeSelectClassName}
           value={categoryValue === UNASSIGNED_VALUE ? '' : categoryValue}
-        />
+          onChange={(event) => setCategoryValue(event.target.value || UNASSIGNED_VALUE)}
+        >
+          <option value="">— Tanpa kategori —</option>
+          {['needs', 'wants', 'obligations'].map((group) => {
+            const items = categories.filter((c) => c.group === group)
+            if (items.length === 0) return null
+
+            return (
+              <optgroup key={group} label={group.toUpperCase()}>
+                {items.map((c) => (
+                  <option key={c.id} value={c.id}>
+                    {c.name}
+                  </option>
+                ))}
+              </optgroup>
+            )
+          })}
+        </select>
       </div>
 
       <div className="space-y-2">
         <Label htmlFor="exp-bank">Sumber Dana</Label>
-        <Select
-          value={bankValue}
-          onValueChange={(value) => setBankValue(value ?? UNASSIGNED_VALUE)}
-        >
-          <SelectTrigger id="exp-bank">
-            <SelectValue placeholder="Pilih sumber dana" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value={UNASSIGNED_VALUE}>— Tanpa sumber dana —</SelectItem>
-            {banks.map((b) => (
-              <SelectItem key={b.id} value={b.id}>
-                {b.name}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-        <input
-          type="hidden"
+        <select
+          id="exp-bank"
           name="bank_id"
+          className={nativeSelectClassName}
           value={bankValue === UNASSIGNED_VALUE ? '' : bankValue}
-        />
+          onChange={(event) => setBankValue(event.target.value || UNASSIGNED_VALUE)}
+        >
+          <option value="">— Tanpa sumber dana —</option>
+          {banks.map((b) => (
+            <option key={b.id} value={b.id}>
+              {b.name}
+            </option>
+          ))}
+        </select>
       </div>
 
       <div className="space-y-2">
         <Label htmlFor="exp-status">Status</Label>
-        <Select name="status" defaultValue={defaultValues?.status ?? 'paid'}>
-          <SelectTrigger id="exp-status">
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            {Object.entries(STATUS_LABELS).map(([value, label]) => (
-              <SelectItem key={value} value={value}>
-                {label}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+        <select
+          id="exp-status"
+          name="status"
+          className={nativeSelectClassName}
+          defaultValue={defaultValues?.status ?? 'paid'}
+        >
+          {Object.entries(STATUS_LABELS).map(([value, label]) => (
+            <option key={value} value={value}>
+              {label}
+            </option>
+          ))}
+        </select>
       </div>
 
       <Button type="submit" className="w-full" disabled={isPending}>
