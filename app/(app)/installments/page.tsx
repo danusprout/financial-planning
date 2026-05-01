@@ -45,12 +45,6 @@ export default async function InstallmentsPage() {
   const { data: banks } = await supabase.from('banks').select('id, name, type').order('name')
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold">Cicilan & Hutang</h1>
-        <p className="text-sm text-muted-foreground mt-1">Kelola pinjaman dan jadwal pembayaran</p>
-      </div>
-      <InstallmentsListClient rows={rows} banks={banks ?? []} />
-    </div>
+    <InstallmentsListClient rows={rows} banks={banks ?? []} />
   )
 }

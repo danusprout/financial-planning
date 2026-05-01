@@ -13,6 +13,7 @@ import {
 import { IncomeForm } from '@/components/forms/IncomeForm'
 import { deleteIncome } from '@/app/actions/income'
 import { formatIDR, formatMonth } from '@/lib/format'
+import { useLang } from '@/lib/i18n'
 import { PlusIcon, Pencil, Trash2, ChevronLeft, ChevronRight } from 'lucide-react'
 
 type Income = {
@@ -43,6 +44,7 @@ function nextMonth(yyyyMM: string): string {
 
 export function IncomeClient({ incomes, total, activeMonth }: IncomeClientProps) {
   const router = useRouter()
+  const { t } = useLang()
   const [addOpen, setAddOpen] = useState(false)
   const [editTarget, setEditTarget] = useState<Income | null>(null)
   const [isPending, startTransition] = useTransition()
@@ -50,14 +52,19 @@ export function IncomeClient({ incomes, total, activeMonth }: IncomeClientProps)
   const navigate = (month: string) => router.push(`/income?month=${month}`)
 
   const handleDelete = (id: string) => {
-    if (!confirm('Hapus pemasukan ini?')) return
+    if (!confirm(t.confirmDeleteIncome)) return
     startTransition(async () => { await deleteIncome(id) })
   }
 
   const displayMonth = formatMonth(new Date(`${activeMonth}-01`))
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-6">
+      <div>
+        <h1 className="text-2xl font-bold">{t.incomeTitle}</h1>
+        <p className="text-sm text-muted-foreground mt-1">{t.incomeSubtitle}</p>
+      </div>
+      <div className="space-y-4">
       {/* Month navigator */}
       <div className="flex items-center justify-between">
         <Button variant="ghost" size="icon" onClick={() => navigate(prevMonth(activeMonth))}>
@@ -71,7 +78,7 @@ export function IncomeClient({ incomes, total, activeMonth }: IncomeClientProps)
 
       {/* Total card */}
       <div className="rounded-xl border bg-card px-5 py-4">
-        <p className="text-sm text-muted-foreground">Total Pemasukan</p>
+        <p className="text-sm text-muted-foreground">{t.totalIncome}</p>
         <p className="text-2xl font-bold mt-1">{formatIDR(total)}</p>
       </div>
 
@@ -80,11 +87,11 @@ export function IncomeClient({ incomes, total, activeMonth }: IncomeClientProps)
         <Dialog open={addOpen} onOpenChange={setAddOpen}>
           <DialogTrigger render={<Button size="sm" />}>
             <PlusIcon className="w-4 h-4 mr-1" />
-            Tambah
+            {t.add}
           </DialogTrigger>
           <DialogContent>
             <DialogHeader>
-              <DialogTitle>Tambah Pemasukan</DialogTitle>
+              <DialogTitle>{t.addIncome}</DialogTitle>
             </DialogHeader>
             <IncomeForm
               defaultMonth={activeMonth}
@@ -97,7 +104,7 @@ export function IncomeClient({ incomes, total, activeMonth }: IncomeClientProps)
       {/* List */}
       {incomes.length === 0 ? (
         <div className="text-center py-12 text-muted-foreground text-sm">
-          Belum ada pemasukan bulan ini
+          {t.noIncome}
         </div>
       ) : (
         <div className="space-y-2">
@@ -126,7 +133,7 @@ export function IncomeClient({ incomes, total, activeMonth }: IncomeClientProps)
                     </DialogTrigger>
                     <DialogContent>
                       <DialogHeader>
-                        <DialogTitle>Edit Pemasukan</DialogTitle>
+                        <DialogTitle>{t.editIncome}</DialogTitle>
                       </DialogHeader>
                       <IncomeForm
                         editId={income.id}
@@ -156,6 +163,7 @@ export function IncomeClient({ incomes, total, activeMonth }: IncomeClientProps)
           ))}
         </div>
       )}
+      </div>
     </div>
   )
 }

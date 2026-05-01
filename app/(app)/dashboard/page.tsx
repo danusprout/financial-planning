@@ -118,21 +118,15 @@ export default async function DashboardPage({ searchParams }: Props) {
   }))
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold">Dashboard</h1>
-        <p className="text-sm text-muted-foreground mt-1">Ringkasan keuangan bulanan</p>
-      </div>
-      <DashboardClient
-        activeMonth={activeMonth}
-        totalIncome={totalIncome}
-        totalExpense={totalExpense}
-        netSaving={netSaving}
-        sisaSaldo={sisaSaldo}
-        pieData={pieData}
-        barData={barData}
-        upcomingInstallments={unpaidUpcoming}
-      />
-    </div>
+    <DashboardClient
+      activeMonth={activeMonth}
+      totalIncome={totalIncome}
+      totalExpense={totalExpense}
+      netSaving={netSaving}
+      sisaSaldo={sisaSaldo}
+      pieData={pieData}
+      barData={barData}
+      upcomingInstallments={unpaidUpcoming}
+    />
   )
 }

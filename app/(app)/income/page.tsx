@@ -24,16 +24,10 @@ export default async function IncomePage({ searchParams }: Props) {
   const total = (incomes ?? []).reduce((sum, i) => sum + Number(i.amount), 0)
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold">Pemasukan</h1>
-        <p className="text-sm text-muted-foreground mt-1">Catat sumber pemasukan per bulan</p>
-      </div>
-      <IncomeClient
-        incomes={incomes ?? []}
-        total={total}
-        activeMonth={activeMonth}
-      />
-    </div>
+    <IncomeClient
+      incomes={incomes ?? []}
+      total={total}
+      activeMonth={activeMonth}
+    />
   )
 }

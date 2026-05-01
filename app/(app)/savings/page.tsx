@@ -30,12 +30,6 @@ export default async function SavingsPage() {
   })
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold">Savings</h1>
-        <p className="text-sm text-muted-foreground mt-1">Track your saving goals and withdrawals</p>
-      </div>
-      <SavingsClient goals={goalsData} />
-    </div>
+    <SavingsClient goals={goalsData} />
   )
 }

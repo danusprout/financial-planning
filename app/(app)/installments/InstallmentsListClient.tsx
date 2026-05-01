@@ -23,6 +23,7 @@ import {
 } from '@/components/ui/select'
 import { createInstallment } from '@/app/actions/installments'
 import { formatIDR } from '@/lib/format'
+import { useLang } from '@/lib/i18n'
 import { PlusIcon, ChevronRight } from 'lucide-react'
 
 type Bank = { id: string; name: string; type: string }
@@ -46,6 +47,7 @@ type State = { error?: string; success?: boolean } | undefined
 function InstallmentForm({ banks, onSuccess }: { banks: Bank[]; onSuccess: () => void }) {
   const wrappedAction = (_: State, formData: FormData) => createInstallment(formData)
   const [state, formAction, isPending] = useActionState<State, FormData>(wrappedAction, undefined)
+  const { t } = useLang()
   if (state?.success) onSuccess()
 
   const today = new Date().toISOString().slice(0, 10)
@@ -56,41 +58,41 @@ function InstallmentForm({ banks, onSuccess }: { banks: Bank[]; onSuccess: () =>
         <Alert variant="destructive"><AlertDescription>{state.error}</AlertDescription></Alert>
       )}
       <div className="space-y-2">
-        <Label htmlFor="inst-name">Nama Pinjaman</Label>
+        <Label htmlFor="inst-name">{t.loanName}</Label>
         <Input id="inst-name" name="name" placeholder="cth: KPR, Cicilan HP" required />
       </div>
       <div className="grid grid-cols-2 gap-3">
         <div className="space-y-2">
-          <Label htmlFor="inst-total">Hutang Awal (Rp)</Label>
+          <Label htmlFor="inst-total">{t.initialDebt}</Label>
           <Input id="inst-total" name="total_amount" type="number" min="0" step="100000" placeholder="0" required />
         </div>
         <div className="space-y-2">
-          <Label htmlFor="inst-monthly">Cicilan/Bulan (Rp)</Label>
+          <Label htmlFor="inst-monthly">{t.monthlyPayment}</Label>
           <Input id="inst-monthly" name="monthly_amount" type="number" min="0" step="10000" placeholder="0" required />
         </div>
       </div>
       <div className="grid grid-cols-2 gap-3">
         <div className="space-y-2">
-          <Label htmlFor="inst-tenor">Tenor (bulan, opsional)</Label>
+          <Label htmlFor="inst-tenor">{t.tenorLabel}</Label>
           <Input id="inst-tenor" name="tenor" type="number" min="1" placeholder="cth: 12" />
         </div>
         <div className="space-y-2">
-          <Label htmlFor="inst-start">Tanggal Mulai</Label>
+          <Label htmlFor="inst-start">{t.startDateLabel}</Label>
           <Input id="inst-start" name="start_date" type="date" defaultValue={today} required />
         </div>
       </div>
       <div className="space-y-2">
-        <Label htmlFor="inst-bank">Sumber Dana (opsional)</Label>
+        <Label htmlFor="inst-bank">{t.paymentSourceOpt}</Label>
         <Select name="bank_id" defaultValue="">
-          <SelectTrigger id="inst-bank"><SelectValue placeholder="Pilih bank" /></SelectTrigger>
+          <SelectTrigger id="inst-bank"><SelectValue placeholder={t.selectBank} /></SelectTrigger>
           <SelectContent>
-            <SelectItem value="">— Tidak ada —</SelectItem>
+            <SelectItem value="">{t.noneOption}</SelectItem>
             {banks.map((b) => <SelectItem key={b.id} value={b.id}>{b.name}</SelectItem>)}
           </SelectContent>
         </Select>
       </div>
       <Button type="submit" className="w-full" disabled={isPending}>
-        {isPending ? 'Menyimpan...' : 'Tambah Pinjaman'}
+        {isPending ? t.savingLabel : t.addLoan}
       </Button>
     </form>
   )
@@ -98,16 +100,22 @@ function InstallmentForm({ banks, onSuccess }: { banks: Bank[]; onSuccess: () =>
 
 export function InstallmentsListClient({ rows, banks }: { rows: InstallmentRow[]; banks: Bank[] }) {
   const [addOpen, setAddOpen] = useState(false)
+  const { t } = useLang()
 
   const active = rows.filter((r) => r.status !== 'LUNAS' && r.is_active)
   const lunas = rows.filter((r) => r.status === 'LUNAS' || !r.is_active)
   const totalRemaining = active.reduce((s, r) => s + r.remaining, 0)
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-6">
+      <div>
+        <h1 className="text-2xl font-bold">{t.installmentsTitle}</h1>
+        <p className="text-sm text-muted-foreground mt-1">{t.installmentsSubtitle}</p>
+      </div>
+      <div className="space-y-4">
       {/* Summary */}
       <div className="rounded-xl border bg-card px-5 py-4">
-        <p className="text-sm text-muted-foreground">Total Sisa Hutang Aktif</p>
+        <p className="text-sm text-muted-foreground">{t.totalActiveDebt}</p>
         <p className="text-2xl font-bold mt-1">{formatIDR(totalRemaining)}</p>
       </div>
 
@@ -115,10 +123,10 @@ export function InstallmentsListClient({ rows, banks }: { rows: InstallmentRow[]
       <div className="flex justify-end">
         <Dialog open={addOpen} onOpenChange={setAddOpen}>
           <DialogTrigger render={<Button size="sm" />}>
-            <PlusIcon className="w-4 h-4 mr-1" />Tambah Pinjaman
+            <PlusIcon className="w-4 h-4 mr-1" />{t.addLoan}
           </DialogTrigger>
           <DialogContent>
-            <DialogHeader><DialogTitle>Tambah Pinjaman</DialogTitle></DialogHeader>
+            <DialogHeader><DialogTitle>{t.addLoan}</DialogTitle></DialogHeader>
             <InstallmentForm banks={banks} onSuccess={() => setAddOpen(false)} />
           </DialogContent>
         </Dialog>
@@ -126,13 +134,13 @@ export function InstallmentsListClient({ rows, banks }: { rows: InstallmentRow[]
 
       {/* Table mirip Google Sheet */}
       {rows.length === 0 ? (
-        <div className="text-center py-12 text-muted-foreground text-sm">Belum ada pinjaman</div>
+        <div className="text-center py-12 text-muted-foreground text-sm">{t.noLoans}</div>
       ) : (
         <div className="space-y-2">
           {active.map((row) => <InstallmentRow key={row.id} row={row} />)}
           {lunas.length > 0 && (
             <div>
-              <p className="text-xs font-semibold uppercase text-muted-foreground mb-2 mt-4">Lunas / Tidak Aktif</p>
+              <p className="text-xs font-semibold uppercase text-muted-foreground mb-2 mt-4">{t.paidOffInactive}</p>
               <div className="space-y-2 opacity-60">
                 {lunas.map((row) => <InstallmentRow key={row.id} row={row} />)}
               </div>
@@ -140,11 +148,13 @@ export function InstallmentsListClient({ rows, banks }: { rows: InstallmentRow[]
           )}
         </div>
       )}
+      </div>
     </div>
   )
 }
 
 function InstallmentRow({ row }: { row: InstallmentRow }) {
+  const { t } = useLang()
   return (
     <Link
       href={`/installments/${row.id}`}
@@ -168,22 +178,22 @@ function InstallmentRow({ row }: { row: InstallmentRow }) {
 
       <div className="grid grid-cols-3 gap-2 text-xs mb-3">
         <div>
-          <p className="text-muted-foreground">Hutang Awal</p>
+          <p className="text-muted-foreground">{t.originalDebt}</p>
           <p className="font-semibold">{formatIDR(row.total_amount)}</p>
         </div>
         <div>
-          <p className="text-muted-foreground">Sudah Dibayar</p>
+          <p className="text-muted-foreground">{t.alreadyPaid}</p>
           <p className="font-semibold text-green-600">{formatIDR(row.totalPaid)}</p>
         </div>
         <div>
-          <p className="text-muted-foreground">Sisa</p>
+          <p className="text-muted-foreground">{t.remainingDebt}</p>
           <p className="font-semibold text-red-600">{formatIDR(row.remaining)}</p>
         </div>
       </div>
 
       <div className="space-y-1">
         <div className="flex justify-between text-xs text-muted-foreground">
-          <span>% Lunas</span>
+          <span>{t.percentPaid}</span>
           <span>{row.progressPct.toFixed(1)}%</span>
         </div>
         <div className="h-1.5 w-full rounded-full bg-muted overflow-hidden">

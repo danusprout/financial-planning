@@ -16,6 +16,7 @@ import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Badge } from '@/components/ui/badge'
 import { createGoal, createSavingTransaction, deleteSavingTransaction } from '@/app/actions/savings'
 import { formatIDR, formatDate } from '@/lib/format'
+import { useLang } from '@/lib/i18n'
 import { PlusIcon, Trash2, TrendingDown, TrendingUp, Target, ChevronRight, CalendarDays, LogOut as WithdrawIcon } from 'lucide-react'
 import Link from 'next/link'
 
@@ -44,24 +45,25 @@ type State = { error?: string; success?: boolean } | undefined
 function GoalForm({ onSuccess }: { onSuccess: () => void }) {
   const wrappedAction = (_: State, fd: FormData) => createGoal(fd)
   const [state, formAction, isPending] = useActionState<State, FormData>(wrappedAction, undefined)
+  const { t } = useLang()
   if (state?.success) onSuccess()
   return (
     <form action={formAction} className="space-y-4">
       {state?.error && <Alert variant="destructive"><AlertDescription>{state.error}</AlertDescription></Alert>}
       <div className="space-y-1.5">
-        <Label>Goal Name</Label>
+        <Label>{t.goalName}</Label>
         <Input name="name" placeholder="e.g. Emergency Fund, iPad, Wedding" required />
       </div>
       <div className="space-y-1.5">
-        <Label>Target Amount (optional)</Label>
+        <Label>{t.targetAmount}</Label>
         <Input name="target_amount" type="number" min="0" step="100000" placeholder="0" />
       </div>
       <div className="space-y-1.5">
-        <Label>Target Date (optional)</Label>
+        <Label>{t.targetDate}</Label>
         <Input name="target_date" type="date" />
       </div>
       <Button type="submit" className="w-full" disabled={isPending}>
-        {isPending ? 'Saving...' : 'Create Goal'}
+        {isPending ? t.savingLabel : t.addGoal}
       </Button>
     </form>
   )
@@ -71,6 +73,7 @@ function GoalForm({ onSuccess }: { onSuccess: () => void }) {
 function TxForm({ goal, type, onSuccess }: { goal: Goal; type: 'in' | 'out'; onSuccess: () => void }) {
   const action = (_: State, fd: FormData) => createSavingTransaction(goal.id, fd)
   const [state, formAction, isPending] = useActionState<State, FormData>(action, undefined)
+  const { t } = useLang()
   if (state?.success) onSuccess()
   const today = new Date().toISOString().slice(0, 10)
   return (
@@ -78,20 +81,20 @@ function TxForm({ goal, type, onSuccess }: { goal: Goal; type: 'in' | 'out'; onS
       {state?.error && <Alert variant="destructive"><AlertDescription>{state.error}</AlertDescription></Alert>}
       <input type="hidden" name="type" value={type} />
       <div className="space-y-1.5">
-        <Label>Date</Label>
+        <Label>{t.startDateLabel}</Label>
         <Input name="date" type="date" defaultValue={today} required />
       </div>
       <div className="space-y-1.5">
-        <Label>Amount (Rp)</Label>
+        <Label>{t.amount}</Label>
         <Input name="amount" type="number" min="1000" step="1000" placeholder="0" required />
       </div>
       <div className="space-y-1.5">
-        <Label>Notes (optional)</Label>
+        <Label>{t.note}</Label>
         <Input name="note" placeholder={type === 'in' ? 'Monthly deposit' : 'Reason for withdrawal'} />
       </div>
       <Button type="submit" className="w-full" disabled={isPending}
         variant={type === 'out' ? 'destructive' : 'default'}>
-        {isPending ? 'Saving...' : type === 'in' ? '+ Add Deposit' : '− Add Withdrawal'}
+        {isPending ? t.savingLabel : type === 'in' ? `+ ${t.deposit}` : `− ${t.withdraw}`}
       </Button>
     </form>
   )
@@ -101,6 +104,7 @@ function TxForm({ goal, type, onSuccess }: { goal: Goal; type: 'in' | 'out'; onS
 function GoalCard({ goal }: { goal: Goal }) {
   const [depositOpen, setDepositOpen] = useState(false)
   const [withdrawOpen, setWithdrawOpen] = useState(false)
+  const { t } = useLang()
   const pct = goal.target_amount && goal.target_amount > 0
     ? Math.min((goal.balance / goal.target_amount) * 100, 100) : null
 
@@ -110,7 +114,7 @@ function GoalCard({ goal }: { goal: Goal }) {
         <div>
           <div className="flex items-center gap-2">
             <h3 className="font-semibold">{goal.name}</h3>
-            {!goal.is_active && <Badge variant="secondary">Closed</Badge>}
+            {!goal.is_active && <Badge variant="secondary">{t.done}</Badge>}
           </div>
           <p className="text-2xl font-bold mt-1">{formatIDR(goal.balance)}</p>
           {goal.target_amount && (
@@ -137,20 +141,20 @@ function GoalCard({ goal }: { goal: Goal }) {
       <div className="flex gap-2">
         <Dialog open={depositOpen} onOpenChange={setDepositOpen}>
           <DialogTrigger render={<Button size="sm" className="flex-1" />}>
-            <TrendingUp className="w-3.5 h-3.5 mr-1" /> Deposit
+            <TrendingUp className="w-3.5 h-3.5 mr-1" /> {t.deposit}
           </DialogTrigger>
           <DialogContent>
-            <DialogHeader><DialogTitle>Deposit to {goal.name}</DialogTitle></DialogHeader>
+            <DialogHeader><DialogTitle>{t.depositToGoal}</DialogTitle></DialogHeader>
             <TxForm goal={goal} type="in" onSuccess={() => setDepositOpen(false)} />
           </DialogContent>
         </Dialog>
 
         <Dialog open={withdrawOpen} onOpenChange={setWithdrawOpen}>
           <DialogTrigger render={<Button size="sm" variant="outline" className="flex-1" />}>
-            <TrendingDown className="w-3.5 h-3.5 mr-1" /> Withdraw
+            <TrendingDown className="w-3.5 h-3.5 mr-1" /> {t.withdraw}
           </DialogTrigger>
           <DialogContent>
-            <DialogHeader><DialogTitle>Withdraw from {goal.name}</DialogTitle></DialogHeader>
+            <DialogHeader><DialogTitle>{t.withdrawFromGoal}</DialogTitle></DialogHeader>
             <TxForm goal={goal} type="out" onSuccess={() => setWithdrawOpen(false)} />
           </DialogContent>
         </Dialog>
@@ -161,6 +165,7 @@ function GoalCard({ goal }: { goal: Goal }) {
 
 // ─── Monthly Recap Table ──────────────────────────────────────────────────────
 function MonthlyRecap({ goals }: { goals: Goal[] }) {
+  const { t } = useLang()
   // Group all 'in' transactions by YYYY-MM, then by goal_id
   const monthMap: Record<string, Record<string, number>> = {}
   const goalIds = goals.map(g => g.id)
@@ -176,7 +181,7 @@ function MonthlyRecap({ goals }: { goals: Goal[] }) {
 
   const months = Object.keys(monthMap).sort((a, b) => b.localeCompare(a))
   if (months.length === 0) return (
-    <div className="text-center py-8 text-sm text-muted-foreground">No deposits yet</div>
+    <div className="text-center py-8 text-sm text-muted-foreground">{t.noMonthlyData}</div>
   )
 
   const monthLabel = (ym: string) => {
@@ -238,15 +243,16 @@ function MonthlyRecap({ goals }: { goals: Goal[] }) {
 // ─── Withdrawal Log ───────────────────────────────────────────────────────────
 function WithdrawalLog({ goals }: { goals: Goal[] }) {
   const [, startTransition] = useTransition()
+  const { t } = useLang()
 
   const outTxs = goals.flatMap(g =>
     g.transactions
-      .filter(t => t.type === 'out')
-      .map(t => ({ ...t, goalName: g.name, goalId: g.id }))
+      .filter(tx => tx.type === 'out')
+      .map(tx => ({ ...tx, goalName: g.name, goalId: g.id }))
   ).sort((a, b) => b.date.localeCompare(a.date) || b.created_at.localeCompare(a.created_at))
 
   if (outTxs.length === 0) return (
-    <div className="text-center py-8 text-sm text-muted-foreground">No withdrawals yet</div>
+    <div className="text-center py-8 text-sm text-muted-foreground">{t.noWithdrawals}</div>
   )
 
   const handleDelete = (id: string, goalId: string) => {
@@ -294,7 +300,7 @@ function WithdrawalLog({ goals }: { goals: Goal[] }) {
           <tr className="bg-rose-50 dark:bg-rose-950/20 border-t-2">
             <td className="px-4 py-3" colSpan={2}><span className="font-bold">Total Withdrawals</span></td>
             <td className="px-4 py-3 text-right font-bold text-rose-600">
-              {formatIDR(outTxs.reduce((s, t) => s + t.amount, 0))}
+              {formatIDR(outTxs.reduce((s, tx) => s + tx.amount, 0))}
             </td>
             <td colSpan={2}></td>
           </tr>
@@ -308,6 +314,7 @@ function WithdrawalLog({ goals }: { goals: Goal[] }) {
 export function SavingsClient({ goals }: { goals: Goal[] }) {
   const [addOpen, setAddOpen] = useState(false)
   const [tab, setTab] = useState<'goals' | 'monthly' | 'withdrawals'>('goals')
+  const { t } = useLang()
 
   const activeGoals = goals.filter(g => g.is_active)
   const totalBalance = activeGoals.reduce((s, g) => s + g.balance, 0)
@@ -315,20 +322,24 @@ export function SavingsClient({ goals }: { goals: Goal[] }) {
 
   return (
     <div className="space-y-6">
+      <div>
+        <h1 className="text-2xl font-bold">{t.savingsTitle}</h1>
+        <p className="text-sm text-muted-foreground mt-1">{t.savingsSubtitle}</p>
+      </div>
       {/* Summary header */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <div className="rounded-xl border bg-card px-5 py-4">
-          <p className="text-xs text-muted-foreground uppercase tracking-wide">Total Balance</p>
+          <p className="text-xs text-muted-foreground uppercase tracking-wide">{t.totalBalance}</p>
           <p className="text-2xl font-bold mt-1 text-primary">{formatIDR(totalBalance)}</p>
         </div>
         {totalTarget > 0 && (
           <div className="rounded-xl border bg-card px-5 py-4">
-            <p className="text-xs text-muted-foreground uppercase tracking-wide">Total Target</p>
+            <p className="text-xs text-muted-foreground uppercase tracking-wide">{t.totalTarget}</p>
             <p className="text-2xl font-bold mt-1">{formatIDR(totalTarget)}</p>
           </div>
         )}
         <div className="rounded-xl border bg-card px-5 py-4">
-          <p className="text-xs text-muted-foreground uppercase tracking-wide">Active Goals</p>
+          <p className="text-xs text-muted-foreground uppercase tracking-wide">{t.activeGoals}</p>
           <p className="text-2xl font-bold mt-1">{activeGoals.length}</p>
         </div>
       </div>
@@ -336,22 +347,22 @@ export function SavingsClient({ goals }: { goals: Goal[] }) {
       {/* Tabs + Add button */}
       <div className="flex items-center justify-between">
         <div className="flex gap-1 border rounded-lg p-1 bg-muted/30">
-          {(['goals', 'monthly', 'withdrawals'] as const).map((t) => (
+          {(['goals', 'monthly', 'withdrawals'] as const).map((tabKey) => (
             <button
-              key={t}
-              onClick={() => setTab(t)}
+              key={tabKey}
+              onClick={() => setTab(tabKey)}
               className={`px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${
-                tab === t
+                tab === tabKey
                   ? 'bg-background shadow-sm text-foreground'
                   : 'text-muted-foreground hover:text-foreground'
               }`}
             >
-              {t === 'goals' ? (
-                <><Target className="w-4 h-4 mr-1.5 inline-block" />Goals</>
-              ) : t === 'monthly' ? (
-                <><CalendarDays className="w-4 h-4 mr-1.5 inline-block" />Monthly</>
+              {tabKey === 'goals' ? (
+                <><Target className="w-4 h-4 mr-1.5 inline-block" />{t.goalsTab}</>
+              ) : tabKey === 'monthly' ? (
+                <><CalendarDays className="w-4 h-4 mr-1.5 inline-block" />{t.monthlyTab}</>
               ) : (
-                <><WithdrawIcon className="w-4 h-4 mr-1.5 inline-block" />Withdrawals</>
+                <><WithdrawIcon className="w-4 h-4 mr-1.5 inline-block" />{t.withdrawalsTab}</>
               )}
             </button>
           ))}
@@ -359,10 +370,10 @@ export function SavingsClient({ goals }: { goals: Goal[] }) {
 
         <Dialog open={addOpen} onOpenChange={setAddOpen}>
           <DialogTrigger render={<Button size="sm" />}>
-            <PlusIcon className="w-4 h-4 mr-1" /> Add Goal
+            <PlusIcon className="w-4 h-4 mr-1" /> {t.addGoal}
           </DialogTrigger>
           <DialogContent>
-            <DialogHeader><DialogTitle>Create Saving Goal</DialogTitle></DialogHeader>
+            <DialogHeader><DialogTitle>{t.addGoal}</DialogTitle></DialogHeader>
             <GoalForm onSuccess={() => setAddOpen(false)} />
           </DialogContent>
         </Dialog>
@@ -374,7 +385,7 @@ export function SavingsClient({ goals }: { goals: Goal[] }) {
           {goals.length === 0 ? (
             <div className="text-center py-16 text-muted-foreground">
               <Target className="w-10 h-10 mx-auto mb-3 opacity-30" />
-              <p className="text-sm">No saving goals yet. Create your first one!</p>
+              <p className="text-sm">{t.noGoals}</p>
             </div>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -387,8 +398,7 @@ export function SavingsClient({ goals }: { goals: Goal[] }) {
       {tab === 'monthly' && (
         <div className="rounded-xl border bg-card overflow-hidden">
           <div className="px-5 py-4 border-b bg-muted/30">
-            <h2 className="font-semibold">Monthly Deposit Recap</h2>
-            <p className="text-xs text-muted-foreground mt-0.5">All deposits grouped by month and goal</p>
+            <h2 className="font-semibold">{t.monthlyRecap}</h2>
           </div>
           <MonthlyRecap goals={goals} />
         </div>
@@ -397,8 +407,7 @@ export function SavingsClient({ goals }: { goals: Goal[] }) {
       {tab === 'withdrawals' && (
         <div className="rounded-xl border bg-card overflow-hidden">
           <div className="px-5 py-4 border-b bg-muted/30">
-            <h2 className="font-semibold">Withdrawal Log</h2>
-            <p className="text-xs text-muted-foreground mt-0.5">All withdrawals from saving goals</p>
+            <h2 className="font-semibold">{t.withdrawalLog}</h2>
           </div>
           <WithdrawalLog goals={goals} />
         </div>

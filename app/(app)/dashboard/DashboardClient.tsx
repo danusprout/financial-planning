@@ -15,6 +15,7 @@ import {
   ResponsiveContainer,
 } from 'recharts'
 import { formatIDR, formatMonth, formatDate } from '@/lib/format'
+import { useLang } from '@/lib/i18n'
 import { ChevronLeft, ChevronRight, AlertCircle } from 'lucide-react'
 
 interface Props {
@@ -55,10 +56,15 @@ export function DashboardClient({
   upcomingInstallments,
 }: Props) {
   const router = useRouter()
+  const { t } = useLang()
   const navigate = (m: string) => router.push(`/dashboard?month=${m}`)
 
   return (
     <div className="space-y-6">
+      <div>
+        <h1 className="text-2xl font-bold">{t.dashboardTitle}</h1>
+        <p className="text-sm text-muted-foreground mt-1">{t.dashboardSubtitle}</p>
+      </div>
       {/* Month navigator */}
       <div className="flex items-center justify-between">
         <Button variant="ghost" size="icon" onClick={() => navigate(prevMonth(activeMonth))}>
@@ -73,10 +79,10 @@ export function DashboardClient({
       {/* Summary cards */}
       <div className="grid grid-cols-2 gap-3">
         {[
-          { label: 'Pemasukan', value: totalIncome, color: 'text-green-600' },
-          { label: 'Pengeluaran', value: totalExpense, color: 'text-red-600' },
-          { label: 'Tabungan (net)', value: netSaving, color: netSaving >= 0 ? 'text-blue-600' : 'text-orange-600' },
-          { label: 'Sisa Saldo', value: sisaSaldo, color: sisaSaldo >= 0 ? 'text-foreground' : 'text-destructive' },
+          { label: t.totalIncome, value: totalIncome, color: 'text-green-600' },
+          { label: t.totalExpenses, value: totalExpense, color: 'text-red-600' },
+          { label: t.netSavingsLabel, value: netSaving, color: netSaving >= 0 ? 'text-blue-600' : 'text-orange-600' },
+          { label: t.remainingBalanceLabel, value: sisaSaldo, color: sisaSaldo >= 0 ? 'text-foreground' : 'text-destructive' },
         ].map((card) => (
           <div key={card.label} className="rounded-xl border bg-card px-4 py-3">
             <p className="text-xs text-muted-foreground">{card.label}</p>
@@ -93,7 +99,7 @@ export function DashboardClient({
           <div className="flex items-center gap-2">
             <AlertCircle className="w-4 h-4 text-amber-600" />
             <p className="font-semibold text-sm text-amber-700 dark:text-amber-400">
-              Cicilan jatuh tempo 7 hari ke depan
+              {t.upcomingDue}
             </p>
           </div>
           <div className="space-y-2">
@@ -113,7 +119,7 @@ export function DashboardClient({
       {/* Pie chart */}
       {pieData.length > 0 && (
         <div>
-          <h2 className="font-semibold mb-3">Breakdown Pengeluaran</h2>
+          <h2 className="font-semibold mb-3">{t.expenseBreakdown}</h2>
           <ResponsiveContainer width="100%" height={240}>
             <PieChart>
               <Pie
@@ -156,7 +162,7 @@ export function DashboardClient({
       {/* Bar chart: estimasi vs realisasi */}
       {barData.length > 0 && (
         <div>
-          <h2 className="font-semibold mb-3">Estimasi vs Realisasi</h2>
+          <h2 className="font-semibold mb-3">{t.budgetVsActual}</h2>
           <ResponsiveContainer width="100%" height={220}>
             <BarChart data={barData} margin={{ left: -10 }}>
               <XAxis dataKey="name" tick={{ fontSize: 11 }} />
@@ -172,10 +178,10 @@ export function DashboardClient({
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b">
-                  <th className="text-left py-2 font-semibold text-muted-foreground text-xs">Kategori</th>
-                  <th className="text-right py-2 font-semibold text-muted-foreground text-xs">Estimasi</th>
-                  <th className="text-right py-2 font-semibold text-muted-foreground text-xs">Realisasi</th>
-                  <th className="text-right py-2 font-semibold text-muted-foreground text-xs">Selisih</th>
+                  <th className="text-left py-2 font-semibold text-muted-foreground text-xs">{t.category}</th>
+                  <th className="text-right py-2 font-semibold text-muted-foreground text-xs">{t.budgetEst}</th>
+                  <th className="text-right py-2 font-semibold text-muted-foreground text-xs">{t.actual}</th>
+                  <th className="text-right py-2 font-semibold text-muted-foreground text-xs">{t.differenceLabel}</th>
                 </tr>
               </thead>
               <tbody>

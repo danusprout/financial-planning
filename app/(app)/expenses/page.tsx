@@ -49,20 +49,14 @@ export default async function ExpensesPage({ searchParams }: Props) {
   const total = (expenses ?? []).reduce((sum, e) => sum + Number(e.amount), 0)
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold">Pengeluaran Harian</h1>
-        <p className="text-sm text-muted-foreground mt-1">Log pengeluaran per hari</p>
-      </div>
-      <ExpensesClient
-        expenses={expenses ?? []}
-        categories={categories ?? []}
-        banks={banks ?? []}
-        total={total}
-        activeMonth={activeMonth}
-        filterCategory={category}
-        filterBank={bank}
-      />
-    </div>
+    <ExpensesClient
+      expenses={expenses ?? []}
+      categories={categories ?? []}
+      banks={banks ?? []}
+      total={total}
+      activeMonth={activeMonth}
+      filterCategory={category}
+      filterBank={bank}
+    />
   )
 }

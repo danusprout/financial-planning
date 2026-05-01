@@ -28,6 +28,7 @@ import {
 import { ExpenseForm } from '@/components/forms/ExpenseForm'
 import { deleteExpense } from '@/app/actions/expenses'
 import { formatIDR, formatDate, formatMonth } from '@/lib/format'
+import { useLang } from '@/lib/i18n'
 import { PlusIcon, Pencil, Trash2, ChevronLeft, ChevronRight, SlidersHorizontal } from 'lucide-react'
 
 type Category = { id: string; name: string; group: string; color: string | null }
@@ -71,12 +72,6 @@ const STATUS_BADGE: Record<string, string> = {
   planned: 'bg-blue-100 text-blue-800',
 }
 
-const STATUS_LABEL: Record<string, string> = {
-  paid: 'Dibayar',
-  pending: 'Pending',
-  planned: 'Rencana',
-}
-
 export function ExpensesClient({
   expenses,
   categories,
@@ -87,9 +82,16 @@ export function ExpensesClient({
   filterBank,
 }: ExpensesClientProps) {
   const router = useRouter()
+  const { t } = useLang()
   const [addOpen, setAddOpen] = useState(false)
   const [editTarget, setEditTarget] = useState<Expense | null>(null)
   const [isPending, startTransition] = useTransition()
+
+  const STATUS_LABEL: Record<string, string> = {
+    paid: t.statusPaid,
+    pending: t.statusPending,
+    planned: t.statusPlanned,
+  }
 
   const today = new Date().toISOString().slice(0, 10)
 
@@ -105,7 +107,7 @@ export function ExpensesClient({
     router.push(buildUrl({ category: filterCategory, bank: filterBank, month }))
 
   const handleDelete = (id: string) => {
-    if (!confirm('Hapus pengeluaran ini?')) return
+    if (!confirm(t.confirmDeleteExpense)) return
     startTransition(async () => { await deleteExpense(id) })
   }
 
@@ -119,7 +121,12 @@ export function ExpensesClient({
   const sortedDates = Object.keys(byDate).sort((a, b) => b.localeCompare(a))
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-6">
+      <div>
+        <h1 className="text-2xl font-bold">{t.expensesTitle}</h1>
+        <p className="text-sm text-muted-foreground mt-1">{t.expensesSubtitle}</p>
+      </div>
+      <div className="space-y-4">
       {/* Month navigator */}
       <div className="flex items-center justify-between">
         <Button variant="ghost" size="icon" onClick={() => navigate(prevMonth(activeMonth))}>
@@ -133,7 +140,7 @@ export function ExpensesClient({
 
       {/* Total */}
       <div className="rounded-xl border bg-card px-5 py-4">
-        <p className="text-sm text-muted-foreground">Total Pengeluaran</p>
+        <p className="text-sm text-muted-foreground">{t.totalExpenses}</p>
         <p className="text-2xl font-bold mt-1">{formatIDR(total)}</p>
       </div>
 
@@ -147,10 +154,10 @@ export function ExpensesClient({
           }
         >
           <SelectTrigger className="h-8 text-xs flex-1">
-            <SelectValue placeholder="Semua kategori" />
+            <SelectValue placeholder={t.allCategories} />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="">Semua kategori</SelectItem>
+            <SelectItem value="">{t.allCategories}</SelectItem>
             {categories.map((c) => (
               <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>
             ))}
@@ -164,10 +171,10 @@ export function ExpensesClient({
           }
         >
           <SelectTrigger className="h-8 text-xs flex-1">
-            <SelectValue placeholder="Semua sumber dana" />
+            <SelectValue placeholder={t.allPaymentSources} />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="">Semua sumber dana</SelectItem>
+            <SelectItem value="">{t.allPaymentSources}</SelectItem>
             {banks.map((b) => (
               <SelectItem key={b.id} value={b.id}>{b.name}</SelectItem>
             ))}
@@ -181,12 +188,12 @@ export function ExpensesClient({
           <DrawerTrigger asChild>
             <Button size="sm">
               <PlusIcon className="w-4 h-4 mr-1" />
-              Tambah
+              {t.add}
             </Button>
           </DrawerTrigger>
           <DrawerContent>
             <DrawerHeader>
-              <DrawerTitle>Tambah Pengeluaran</DrawerTitle>
+              <DrawerTitle>{t.addExpense}</DrawerTitle>
             </DrawerHeader>
             <div className="px-4 pb-6">
               <ExpenseForm
@@ -203,7 +210,7 @@ export function ExpensesClient({
       {/* List grouped by date */}
       {sortedDates.length === 0 ? (
         <div className="text-center py-12 text-muted-foreground text-sm">
-          Belum ada pengeluaran bulan ini
+          {t.noExpenses}
         </div>
       ) : (
         <div className="space-y-4">
@@ -267,7 +274,7 @@ export function ExpensesClient({
                             </DialogTrigger>
                             <DialogContent>
                               <DialogHeader>
-                                <DialogTitle>Edit Pengeluaran</DialogTitle>
+                                <DialogTitle>{t.editExpense}</DialogTitle>
                               </DialogHeader>
                               <ExpenseForm
                                 editId={expense.id}
@@ -305,6 +312,7 @@ export function ExpensesClient({
           })}
         </div>
       )}
+      </div>
     </div>
   )
 }
