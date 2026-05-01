@@ -23,7 +23,6 @@ import {
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue,
 } from '@/components/ui/select'
 import { ExpenseForm } from '@/components/forms/ExpenseForm'
 import { deleteExpense } from '@/app/actions/expenses'
@@ -154,7 +153,11 @@ export function ExpensesClient({
           }
         >
           <SelectTrigger className="h-8 text-xs flex-1">
-            <SelectValue placeholder={t.allCategories} />
+            <span className={filterCategory ? 'text-foreground' : 'text-muted-foreground'}>
+              {filterCategory
+                ? (categories.find((c) => c.id === filterCategory)?.name ?? t.allCategories)
+                : t.allCategories}
+            </span>
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="">{t.allCategories}</SelectItem>
@@ -171,7 +174,11 @@ export function ExpensesClient({
           }
         >
           <SelectTrigger className="h-8 text-xs flex-1">
-            <SelectValue placeholder={t.allPaymentSources} />
+            <span className={filterBank ? 'text-foreground' : 'text-muted-foreground'}>
+              {filterBank
+                ? (banks.find((b) => b.id === filterBank)?.name ?? t.allPaymentSources)
+                : t.allPaymentSources}
+            </span>
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="">{t.allPaymentSources}</SelectItem>
