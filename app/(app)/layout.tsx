@@ -14,20 +14,26 @@ export default async function AppLayout({ children }: { children: React.ReactNod
 
   return (
     <LangProvider>
-      <div className="min-h-screen bg-background">
+      <div className="min-h-screen bg-stone-50">
         <Sidebar />
 
         <div className="lg:pl-64">
-          {/* Mobile top header — spacer so content doesn't hide under hamburger */}
-          <header className="lg:hidden sticky top-0 z-30 bg-background/80 backdrop-blur border-b flex items-center px-4 h-14">
-            {/* 48px left padding to clear the hamburger button */}
-            <span className="pl-12 flex items-center gap-2 font-bold text-sm text-foreground">
-              <Wallet className="w-4 h-4 text-primary" /> Financial
-            </span>
+          <header className="sticky top-0 z-30 border-b border-slate-200/80 bg-stone-50/90 backdrop-blur">
+            <div className="flex h-14 items-center px-4 lg:px-8">
+              <span className="pl-12 text-sm font-semibold tracking-tight text-slate-900 lg:pl-0 lg:hidden">
+                Financial Planning
+              </span>
+              <span className="hidden items-center gap-2 text-sm font-medium text-slate-500 lg:flex">
+                <Wallet className="h-4 w-4 text-slate-500" />
+                Personal finance workspace
+              </span>
+            </div>
           </header>
 
-          <main className="p-4 lg:p-8 max-w-6xl mx-auto">
-            {children}
+          <main className="mx-auto max-w-6xl p-4 lg:p-8">
+            <div className="rounded-[2rem] border border-slate-200 bg-white p-5 shadow-[0_20px_60px_rgba(15,23,42,0.06)] lg:p-8">
+              {children}
+            </div>
           </main>
         </div>
       </div>

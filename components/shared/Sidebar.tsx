@@ -35,14 +35,17 @@ function NavContent({ pathname, onClose }: { pathname: string; onClose?: () => v
 
   return (
     <div className="flex flex-col h-full">
-      {/* Logo */}
-      <div className="flex items-center gap-2 px-6 h-16 border-b border-border/50">
-        <Wallet className="w-6 h-6 text-primary" />
-        <span className="font-bold text-lg text-foreground">Financial</span>
+      <div className="flex h-16 items-center gap-3 border-b border-slate-200 px-6">
+        <span className="flex h-10 w-10 items-center justify-center rounded-2xl border border-slate-200 bg-stone-50">
+          <Wallet className="h-4 w-4 text-slate-700" />
+        </span>
+        <div>
+          <p className="text-base font-semibold tracking-tight text-slate-900">Financial</p>
+          <p className="text-xs text-slate-500">Planning</p>
+        </div>
       </div>
 
-      {/* Nav items */}
-      <nav className="flex-1 px-3 py-6 space-y-1">
+      <nav className="flex-1 space-y-1 px-4 py-6">
         {navItems.map((item) => {
           const isActive = pathname.startsWith(item.href)
           const Icon = item.icon
@@ -52,10 +55,10 @@ function NavContent({ pathname, onClose }: { pathname: string; onClose?: () => v
               href={item.href}
               onClick={onClose}
               className={cn(
-                'flex items-center gap-3 px-3 py-2.5 text-sm font-medium transition-colors rounded-lg',
+                'flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-medium transition-colors',
                 isActive
-                  ? 'bg-primary text-primary-foreground'
-                  : 'text-muted-foreground hover:bg-muted hover:text-foreground'
+                  ? 'bg-slate-900 text-white shadow-sm'
+                  : 'text-slate-500 hover:bg-stone-50 hover:text-slate-900'
               )}
             >
               <Icon className="w-5 h-5 flex-shrink-0" />
@@ -65,12 +68,10 @@ function NavContent({ pathname, onClose }: { pathname: string; onClose?: () => v
         })}
       </nav>
 
-      {/* Bottom section */}
-      <div className="px-3 pb-6 space-y-1 border-t border-border/50 pt-4">
-        {/* Language toggle */}
+      <div className="space-y-1 border-t border-slate-200 px-4 pb-6 pt-4">
         <button
           onClick={() => setLang(lang === 'en' ? 'id' : 'en')}
-          className="flex items-center gap-3 px-3 py-2.5 text-sm font-medium w-full text-left transition-colors rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground"
+          className="flex w-full items-center gap-3 rounded-2xl px-4 py-3 text-left text-sm font-medium text-slate-500 transition-colors hover:bg-stone-50 hover:text-slate-900"
         >
           <Languages className="w-5 h-5 flex-shrink-0" />
           {lang === 'en' ? 'Bahasa Indonesia' : 'English'}
@@ -79,10 +80,10 @@ function NavContent({ pathname, onClose }: { pathname: string; onClose?: () => v
           href="/settings/categories"
           onClick={onClose}
           className={cn(
-            'flex items-center gap-3 px-3 py-2.5 text-sm font-medium transition-colors rounded-lg',
+            'flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-medium transition-colors',
             pathname.startsWith('/settings')
-              ? 'bg-primary text-primary-foreground'
-              : 'text-muted-foreground hover:bg-muted hover:text-foreground'
+              ? 'bg-slate-900 text-white shadow-sm'
+              : 'text-slate-500 hover:bg-stone-50 hover:text-slate-900'
           )}
         >
           <Settings className="w-5 h-5 flex-shrink-0" />
@@ -91,7 +92,7 @@ function NavContent({ pathname, onClose }: { pathname: string; onClose?: () => v
         <form action={logout}>
           <button
             type="submit"
-            className="flex items-center gap-3 px-3 py-2.5 text-sm font-medium w-full text-left transition-colors rounded-lg text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
+            className="flex w-full items-center gap-3 rounded-2xl px-4 py-3 text-left text-sm font-medium text-slate-500 transition-colors hover:bg-rose-50 hover:text-rose-600"
           >
             <LogOut className="w-5 h-5 flex-shrink-0" />
             {t.logout}
@@ -108,33 +109,27 @@ export function Sidebar() {
 
   return (
     <>
-      {/* Desktop sidebar — fixed, always visible on lg+ */}
-      <aside className="hidden lg:flex lg:flex-col fixed inset-y-0 left-0 w-64 bg-card border-r border-border z-40">
+      <aside className="fixed inset-y-0 left-0 z-40 hidden w-64 border-r border-slate-200 bg-white lg:flex lg:flex-col">
         <NavContent pathname={pathname} />
       </aside>
 
-      {/* Mobile: hamburger button (rendered inside mobile top header via portal-like approach) */}
       <button
-        className="lg:hidden fixed top-3 left-3 z-50 p-2 rounded-lg bg-card border border-border shadow-sm"
+        className="fixed left-3 top-3 z-50 rounded-xl border border-slate-200 bg-white p-2 shadow-sm lg:hidden"
         onClick={() => setMobileOpen(true)}
         aria-label="Buka menu"
       >
         <Menu className="w-5 h-5" />
       </button>
 
-      {/* Mobile overlay */}
       {mobileOpen && (
         <>
-          {/* Backdrop */}
           <div
-            className="lg:hidden fixed inset-0 z-50 bg-black/40 backdrop-blur-sm"
+            className="fixed inset-0 z-50 bg-slate-900/20 backdrop-blur-sm lg:hidden"
             onClick={() => setMobileOpen(false)}
           />
-          {/* Drawer */}
-          <aside className="lg:hidden fixed inset-y-0 left-0 z-50 w-72 bg-card border-r border-border shadow-2xl">
-            {/* Close button */}
+          <aside className="fixed inset-y-0 left-0 z-50 w-72 border-r border-slate-200 bg-white shadow-2xl lg:hidden">
             <button
-              className="absolute top-4 right-4 p-1.5 rounded-lg hover:bg-muted transition-colors"
+              className="absolute right-4 top-4 rounded-xl p-1.5 transition-colors hover:bg-stone-50"
               onClick={() => setMobileOpen(false)}
               aria-label="Tutup menu"
             >
