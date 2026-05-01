@@ -1,36 +1,41 @@
-import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
-import { SavingsListClient } from './SavingsListClient'
+import { SavingsClient } from './SavingsClient'
 
 export default async function SavingsPage() {
   const supabase = await createClient()
 
+  // All goals with all their transactions
   const { data: goals } = await supabase
     .from('saving_goals')
-    .select(`
-      *,
-      saving_transactions ( amount, type )
-    `)
+    .select(`*, saving_transactions ( id, date, type, amount, note, created_at )`)
     .order('is_active', { ascending: false })
     .order('created_at', { ascending: true })
 
-  // Compute saldo per goal
-  const goalsWithBalance = (goals ?? []).map((g) => {
-    const txs: { amount: number; type: string }[] = g.saving_transactions ?? []
-    const balance = txs.reduce(
-      (sum, t) => sum + (t.type === 'in' ? Number(t.amount) : -Number(t.amount)),
-      0
-    )
-    return { ...g, balance }
+  const goalsData = (goals ?? []).map((g) => {
+    const txs: { id: string; date: string; type: string; amount: number; note: string | null; created_at: string }[] =
+      (g.saving_transactions ?? []).map((t: { id: string; date: string; type: string; amount: number | string; note: string | null; created_at: string }) => ({
+        ...t,
+        amount: Number(t.amount),
+      }))
+    const balance = txs.reduce((s, t) => s + (t.type === 'in' ? t.amount : -t.amount), 0)
+    return {
+      id: g.id as string,
+      name: g.name as string,
+      target_amount: g.target_amount ? Number(g.target_amount) : null,
+      target_date: g.target_date as string | null,
+      is_active: g.is_active as boolean,
+      balance,
+      transactions: txs,
+    }
   })
 
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold">Tabungan</h1>
-        <p className="text-sm text-muted-foreground mt-1">Kelola tujuan tabungan kamu</p>
+        <h1 className="text-2xl font-bold">Savings</h1>
+        <p className="text-sm text-muted-foreground mt-1">Track your saving goals and withdrawals</p>
       </div>
-      <SavingsListClient goals={goalsWithBalance} />
+      <SavingsClient goals={goalsData} />
     </div>
   )
 }
