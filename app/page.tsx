@@ -1,173 +1,237 @@
 import Link from 'next/link'
 import { buttonVariants } from '@/components/ui/button'
-import { TrendingUp, TrendingDown, PiggyBank, RefreshCw, Shield, BarChart3, Wallet } from 'lucide-react'
+import { ArrowUpRight, Check, PiggyBank, RefreshCw, TrendingDown, TrendingUp, Wallet } from 'lucide-react'
 
 const features = [
   {
     icon: TrendingUp,
     label: 'Pemasukan',
-    desc: 'Catat gaji, bonus, dan semua sumber pemasukan secara rapi.',
-    color: 'text-emerald-600',
-    bg: 'bg-emerald-50',
+    desc: 'Catat semua sumber pemasukan tanpa ribet.',
   },
   {
     icon: TrendingDown,
     label: 'Pengeluaran',
-    desc: 'Log pengeluaran harian per kategori dan sumber dana.',
-    color: 'text-rose-600',
-    bg: 'bg-rose-50',
+    desc: 'Lihat ke mana uang keluar dengan kategori yang jelas.',
   },
   {
     icon: PiggyBank,
     label: 'Tabungan',
-    desc: 'Kelola multi-goal: Dana Darurat, Investasi, Liburan, dan lainnya.',
-    color: 'text-blue-600',
-    bg: 'bg-blue-50',
+    desc: 'Pisahkan target dan progres tabungan di satu dashboard.',
   },
   {
     icon: RefreshCw,
     label: 'Cicilan',
-    desc: 'Jadwal cicilan otomatis dengan pengingat dan pembayaran manual.',
-    color: 'text-violet-600',
-    bg: 'bg-violet-50',
+    desc: 'Pantau tagihan rutin supaya tidak ada yang terlewat.',
   },
 ]
 
-const trustPoints = [
-  { icon: Shield, label: 'Data Aman', desc: 'Data tersimpan aman — hanya kamu yang bisa mengaksesnya.' },
-  { icon: BarChart3, label: 'Laporan Visual', desc: 'Ringkasan bulanan dan tren keuanganmu dalam satu tampilan.' },
+const highlights = [
+  'Ringkas dan mudah dipakai setiap hari',
+  'Semua catatan keuangan ada di satu tempat',
+  'Cocok untuk budgeting pribadi tanpa spreadsheet',
+]
+
+const stats = [
+  { value: '4', label: 'menu inti' },
+  { value: '1', label: 'dashboard terpusat' },
+  { value: '0', label: 'iklan dan biaya personal' },
 ]
 
 export default function LandingPage() {
   return (
-    <div className="min-h-screen bg-white">
-      {/* Header */}
-      <header className="border-b bg-white/80 backdrop-blur sticky top-0 z-50">
-        <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-2 font-bold text-lg text-blue-600">
-            <Wallet className="w-6 h-6" />
+    <div className="min-h-screen bg-stone-50 text-slate-900">
+      <header className="border-b border-slate-200/80 bg-stone-50/90 backdrop-blur">
+        <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-5 sm:px-6">
+          <Link href="/" className="flex items-center gap-2.5 font-semibold tracking-tight text-slate-900">
+            <span className="flex h-9 w-9 items-center justify-center rounded-2xl border border-slate-200 bg-white shadow-sm">
+              <Wallet className="h-4 w-4 text-slate-700" />
+            </span>
             <span>Financial Planning</span>
-          </div>
-          <div className="flex gap-3">
-            <Link href="/login" className={buttonVariants({ variant: 'ghost' })}>Masuk</Link>
-            <Link href="/register" className={buttonVariants()}>Daftar Gratis</Link>
+          </Link>
+
+          <div className="flex items-center gap-2">
+            <Link href="/login" className={buttonVariants({ variant: 'ghost', className: 'text-slate-700' })}>
+              Masuk
+            </Link>
+            <Link
+              href="/register"
+              className={buttonVariants({
+                className: 'rounded-full bg-slate-900 text-white hover:bg-slate-800',
+              })}
+            >
+              Daftar
+            </Link>
           </div>
         </div>
       </header>
 
-      {/* Hero */}
-      <section className="bg-gradient-to-br from-blue-600 to-indigo-700 text-white py-24 px-6">
-        <div className="max-w-4xl mx-auto text-center">
-          <div className="inline-flex items-center gap-2 bg-white/10 rounded-full px-4 py-1.5 text-sm font-medium mb-8 border border-white/20">
-            ✨ Gratis selamanya untuk penggunaan personal
+      <main>
+        <section className="px-5 py-16 sm:px-6 sm:py-24">
+          <div className="mx-auto grid max-w-6xl gap-12 lg:grid-cols-[1.15fr_0.85fr] lg:items-center">
+            <div className="max-w-2xl">
+              <div className="inline-flex items-center rounded-full border border-slate-200 bg-white px-3 py-1 text-sm text-slate-600 shadow-sm">
+                Simple personal finance tracker
+              </div>
+
+              <h1 className="mt-6 text-4xl font-semibold tracking-tight text-balance sm:text-5xl">
+                Kelola uangmu dengan cara yang lebih tenang.
+              </h1>
+
+              <p className="mt-5 max-w-xl text-base leading-7 text-slate-600 sm:text-lg">
+                Catat pemasukan, pengeluaran, tabungan, dan cicilan dalam tampilan yang
+                bersih. Fokus ke hal penting tanpa dashboard yang ramai.
+              </p>
+
+              <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+                <Link
+                  href="/register"
+                  className={buttonVariants({
+                    size: 'lg',
+                    className: 'rounded-full bg-slate-900 px-6 text-white hover:bg-slate-800',
+                  })}
+                >
+                  Mulai Gratis
+                </Link>
+                <Link
+                  href="/login"
+                  className={buttonVariants({
+                    variant: 'outline',
+                    size: 'lg',
+                    className: 'rounded-full border-slate-300 bg-white px-6 text-slate-700 hover:bg-slate-100',
+                  })}
+                >
+                  Lihat Akun
+                </Link>
+              </div>
+
+              <div className="mt-8 space-y-3">
+                {highlights.map((item) => (
+                  <div key={item} className="flex items-center gap-3 text-sm text-slate-600">
+                    <span className="flex h-6 w-6 items-center justify-center rounded-full bg-emerald-100 text-emerald-700">
+                      <Check className="h-3.5 w-3.5" />
+                    </span>
+                    <span>{item}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="rounded-[2rem] border border-slate-200 bg-white p-5 shadow-[0_20px_60px_rgba(15,23,42,0.08)]">
+              <div className="rounded-[1.5rem] border border-slate-200 bg-slate-900 p-6 text-white">
+                <div className="flex items-start justify-between">
+                  <div>
+                    <p className="text-sm text-slate-300">Ringkasan Bulan Ini</p>
+                    <p className="mt-2 text-3xl font-semibold">Rp4.250.000</p>
+                  </div>
+                  <span className="rounded-full bg-white/10 px-3 py-1 text-xs text-slate-200">
+                    Stabil
+                  </span>
+                </div>
+
+                <div className="mt-8 grid gap-3">
+                  <div className="rounded-2xl bg-white/6 p-4">
+                    <div className="flex items-center justify-between text-sm">
+                      <span className="text-slate-300">Pemasukan</span>
+                      <span className="flex items-center gap-1 text-emerald-300">
+                        <TrendingUp className="h-4 w-4" />
+                        Rp7.500.000
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="rounded-2xl bg-white/6 p-4">
+                    <div className="flex items-center justify-between text-sm">
+                      <span className="text-slate-300">Pengeluaran</span>
+                      <span className="flex items-center gap-1 text-rose-300">
+                        <TrendingDown className="h-4 w-4" />
+                        Rp2.100.000
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="rounded-2xl bg-white/6 p-4">
+                    <div className="flex items-center justify-between text-sm">
+                      <span className="text-slate-300">Tabungan</span>
+                      <span className="flex items-center gap-1 text-sky-300">
+                        <PiggyBank className="h-4 w-4" />
+                        Rp1.150.000
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="mt-4 grid grid-cols-3 gap-3">
+                {stats.map((item) => (
+                  <div key={item.label} className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+                    <p className="text-2xl font-semibold text-slate-900">{item.value}</p>
+                    <p className="mt-1 text-xs leading-5 text-slate-500">{item.label}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
-          <h1 className="text-4xl sm:text-5xl font-bold mb-6 leading-tight">
-            Kelola Keuangan Pribadi<br />dengan Cerdas
-          </h1>
-          <p className="text-xl text-blue-100 mb-10 max-w-2xl mx-auto leading-relaxed">
-            Gantikan spreadsheet kamu dengan dashboard yang lebih terstruktur.
-            Lacak pemasukan, pengeluaran, tabungan, dan cicilan dalam satu tempat.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+        </section>
+
+        <section className="border-t border-slate-200 bg-white px-5 py-16 sm:px-6">
+          <div className="mx-auto max-w-6xl">
+            <div className="max-w-xl">
+              <p className="text-sm font-medium uppercase tracking-[0.16em] text-slate-400">
+                Fitur Utama
+              </p>
+              <h2 className="mt-3 text-3xl font-semibold tracking-tight text-slate-900">
+                Semua yang dibutuhkan untuk finansial pribadi.
+              </h2>
+              <p className="mt-3 text-slate-600">
+                Cukup empat area utama, tanpa elemen yang berlebihan.
+              </p>
+            </div>
+
+            <div className="mt-10 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+              {features.map((feature) => {
+                const Icon = feature.icon
+
+                return (
+                  <div
+                    key={feature.label}
+                    className="rounded-[1.75rem] border border-slate-200 bg-stone-50 p-6 transition-colors hover:bg-white"
+                  >
+                    <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-white shadow-sm ring-1 ring-slate-200">
+                      <Icon className="h-5 w-5 text-slate-700" />
+                    </div>
+                    <h3 className="mt-5 text-lg font-semibold text-slate-900">{feature.label}</h3>
+                    <p className="mt-2 text-sm leading-6 text-slate-600">{feature.desc}</p>
+                  </div>
+                )
+              })}
+            </div>
+          </div>
+        </section>
+
+        <section className="px-5 py-16 sm:px-6">
+          <div className="mx-auto flex max-w-4xl flex-col items-start justify-between gap-6 rounded-[2rem] border border-slate-200 bg-white p-8 shadow-sm sm:flex-row sm:items-center">
+            <div>
+              <h2 className="text-2xl font-semibold tracking-tight text-slate-900">
+                Mulai dari catatan yang sederhana.
+              </h2>
+              <p className="mt-2 max-w-2xl text-slate-600">
+                Daftar gratis dan pakai dashboard yang lebih bersih untuk kebutuhan harian.
+              </p>
+            </div>
+
             <Link
               href="/register"
               className={buttonVariants({
                 size: 'lg',
-                className: 'bg-white text-blue-600 hover:bg-blue-50 font-semibold shadow-lg',
+                className: 'rounded-full bg-slate-900 px-6 text-white hover:bg-slate-800',
               })}
             >
-              Mulai Gratis Sekarang
-            </Link>
-            <Link
-              href="/login"
-              className={buttonVariants({
-                variant: 'outline',
-                size: 'lg',
-                className: 'border-white/50 text-white hover:bg-white/10 bg-transparent',
-              })}
-            >
-              Sudah punya akun? Masuk
+              Buat Akun
+              <ArrowUpRight className="ml-1 h-4 w-4" />
             </Link>
           </div>
-        </div>
-      </section>
-
-      {/* Features */}
-      <section className="py-20 px-6 bg-slate-50">
-        <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-14">
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">Semua yang kamu butuhkan</h2>
-            <p className="text-lg text-gray-500 max-w-xl mx-auto">
-              Satu platform lengkap untuk semua aspek keuangan pribadimu.
-            </p>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {features.map((f) => {
-              const Icon = f.icon
-              return (
-                <div
-                  key={f.label}
-                  className="bg-white rounded-xl border border-gray-100 p-6 shadow-sm hover:shadow-md transition-shadow space-y-4"
-                >
-                  <div className={`inline-flex p-3 rounded-xl ${f.bg}`}>
-                    <Icon className={`w-6 h-6 ${f.color}`} />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold text-gray-900 mb-1">{f.label}</h3>
-                    <p className="text-sm text-gray-500 leading-relaxed">{f.desc}</p>
-                  </div>
-                </div>
-              )
-            })}
-          </div>
-        </div>
-      </section>
-
-      {/* Trust section */}
-      <section className="py-16 px-6 bg-white">
-        <div className="max-w-4xl mx-auto">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {trustPoints.map((t) => {
-              const Icon = t.icon
-              return (
-                <div key={t.label} className="flex items-start gap-4">
-                  <div className="flex-shrink-0 p-3 rounded-xl bg-blue-50">
-                    <Icon className="w-6 h-6 text-blue-600" />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold text-gray-900 mb-1">{t.label}</h3>
-                    <p className="text-sm text-gray-500">{t.desc}</p>
-                  </div>
-                </div>
-              )
-            })}
-          </div>
-        </div>
-      </section>
-
-      {/* CTA banner */}
-      <section className="py-16 px-6 bg-blue-600">
-        <div className="max-w-2xl mx-auto text-center">
-          <h2 className="text-2xl font-bold text-white mb-4">Siap mulai mengatur keuanganmu?</h2>
-          <p className="text-blue-100 mb-8">Daftar gratis sekarang, tidak perlu kartu kredit.</p>
-          <Link
-            href="/register"
-            className={buttonVariants({
-              size: 'lg',
-              className: 'bg-white text-blue-600 hover:bg-blue-50 font-semibold',
-            })}
-          >
-            Buat Akun Gratis
-          </Link>
-        </div>
-      </section>
-
-      <footer className="bg-gray-900 text-gray-400 text-center py-8 text-sm">
-        <div className="max-w-6xl mx-auto px-6">
-          <p className="font-medium text-white mb-1 flex items-center justify-center gap-2"><Wallet className="w-4 h-4" /> Financial Planning</p>
-          <p>Data kamu aman — hanya kamu yang bisa mengaksesnya.</p>
-        </div>
-      </footer>
+        </section>
+      </main>
     </div>
   )
 }
