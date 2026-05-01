@@ -6,6 +6,7 @@ import { Label } from '@/components/ui/label'
 import { Button } from '@/components/ui/button'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { createExpense, updateExpense } from '@/app/actions/expenses'
+import { ChevronDown } from 'lucide-react'
 
 type State = { error?: string; success?: boolean } | undefined
 
@@ -37,7 +38,7 @@ const STATUS_LABELS = {
 }
 
 const nativeSelectClassName =
-  'flex h-11 w-full rounded-2xl border border-slate-200 bg-stone-50 px-4 text-sm text-slate-900 outline-none transition-colors focus:border-ring focus:ring-3 focus:ring-ring/50'
+  'flex h-11 w-full appearance-none rounded-2xl border border-slate-200 bg-stone-50 px-4 pr-11 text-sm text-slate-900 outline-none transition-colors focus:border-ring focus:ring-3 focus:ring-ring/50'
 
 export function ExpenseForm({
   onSuccess,
@@ -104,63 +105,72 @@ export function ExpenseForm({
 
       <div className="space-y-2">
         <Label htmlFor="exp-category">Kategori</Label>
-        <select
-          id="exp-category"
-          name="category_id"
-          className={nativeSelectClassName}
-          value={categoryValue === UNASSIGNED_VALUE ? '' : categoryValue}
-          onChange={(event) => setCategoryValue(event.target.value || UNASSIGNED_VALUE)}
-        >
-          <option value="">— Tanpa kategori —</option>
-          {['needs', 'wants', 'obligations'].map((group) => {
-            const items = categories.filter((c) => c.group === group)
-            if (items.length === 0) return null
+        <div className="relative">
+          <select
+            id="exp-category"
+            name="category_id"
+            className={nativeSelectClassName}
+            value={categoryValue === UNASSIGNED_VALUE ? '' : categoryValue}
+            onChange={(event) => setCategoryValue(event.target.value || UNASSIGNED_VALUE)}
+          >
+            <option value="">— Tanpa kategori —</option>
+            {['needs', 'wants', 'obligations'].map((group) => {
+              const items = categories.filter((c) => c.group === group)
+              if (items.length === 0) return null
 
-            return (
-              <optgroup key={group} label={group.toUpperCase()}>
-                {items.map((c) => (
-                  <option key={c.id} value={c.id}>
-                    {c.name}
-                  </option>
-                ))}
-              </optgroup>
-            )
-          })}
-        </select>
+              return (
+                <optgroup key={group} label={group.toUpperCase()}>
+                  {items.map((c) => (
+                    <option key={c.id} value={c.id}>
+                      {c.name}
+                    </option>
+                  ))}
+                </optgroup>
+              )
+            })}
+          </select>
+          <ChevronDown className="pointer-events-none absolute right-4 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+        </div>
       </div>
 
       <div className="space-y-2">
         <Label htmlFor="exp-bank">Sumber Dana</Label>
-        <select
-          id="exp-bank"
-          name="bank_id"
-          className={nativeSelectClassName}
-          value={bankValue === UNASSIGNED_VALUE ? '' : bankValue}
-          onChange={(event) => setBankValue(event.target.value || UNASSIGNED_VALUE)}
-        >
-          <option value="">— Tanpa sumber dana —</option>
-          {banks.map((b) => (
-            <option key={b.id} value={b.id}>
-              {b.name}
-            </option>
-          ))}
-        </select>
+        <div className="relative">
+          <select
+            id="exp-bank"
+            name="bank_id"
+            className={nativeSelectClassName}
+            value={bankValue === UNASSIGNED_VALUE ? '' : bankValue}
+            onChange={(event) => setBankValue(event.target.value || UNASSIGNED_VALUE)}
+          >
+            <option value="">— Tanpa sumber dana —</option>
+            {banks.map((b) => (
+              <option key={b.id} value={b.id}>
+                {b.name}
+              </option>
+            ))}
+          </select>
+          <ChevronDown className="pointer-events-none absolute right-4 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+        </div>
       </div>
 
       <div className="space-y-2">
         <Label htmlFor="exp-status">Status</Label>
-        <select
-          id="exp-status"
-          name="status"
-          className={nativeSelectClassName}
-          defaultValue={defaultValues?.status ?? 'paid'}
-        >
-          {Object.entries(STATUS_LABELS).map(([value, label]) => (
-            <option key={value} value={value}>
-              {label}
-            </option>
-          ))}
-        </select>
+        <div className="relative">
+          <select
+            id="exp-status"
+            name="status"
+            className={nativeSelectClassName}
+            defaultValue={defaultValues?.status ?? 'paid'}
+          >
+            {Object.entries(STATUS_LABELS).map(([value, label]) => (
+              <option key={value} value={value}>
+                {label}
+              </option>
+            ))}
+          </select>
+          <ChevronDown className="pointer-events-none absolute right-4 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+        </div>
       </div>
 
       <Button type="submit" className="w-full" disabled={isPending}>
